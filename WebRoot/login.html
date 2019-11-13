@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>管理后台</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="statics/css/bootstrap.min.css">
+  <link rel="stylesheet" href="statics/css/font-awesome.min.css">
+  <link rel="stylesheet" href="statics/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="statics/css/all-skins.min.css">
+  <link rel="stylesheet" href="statics/css/main.css">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!-- <body background="../CAHGAdmin/statics/img/bg.jpg" class="hold-transition login-page"  > -->
+<body background="../CAHGAdmin/statics/img/timg.jpg">
+<div class="login-box" id="rrapp" v-cloak>
+  <div class="login-logo">
+    <b>后台管理</b>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+      <p class="login-box-msg">管理员登录</p>
+      <div v-if="error" class="alert alert-danger alert-dismissible">
+        <h4 style="margin-bottom: 0px;"><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="text" class="form-control" v-model="username" placeholder="账号">
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input type="password" class="form-control" v-model="password" placeholder="密码">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+	  	<label><input id="remember" type="checkbox">记住密码</label><br>
+	  </div>
+      <div class="form-group has-feedback" style="display: none">
+        <input type="text" class="form-control" v-model="captcha" @keyup.enter="login" placeholder="验证码">
+        <span class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback" style="display: none">
+        <img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src" @click="refreshCode">
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" @click="refreshCode">点击刷新</a>
+      </div>
+      
+      
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button type="button" class="btn btn-primary btn-block btn-flat" @click="login">登录</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    <!-- /.social-auth-links -->
+
+  </div>
+  <!-- /.login-box-body -->
+</div>
+
+<!-- /.login-box -->
+<script src="statics/libs/jquery.min.js"></script>
+<script src="statics/libs/vue.min.js"></script>
+<script src="statics/libs/bootstrap.min.js"></script>
+<script src="statics/libs/jquery.slimscroll.min.js"></script>
+<script src="statics/libs/fastclick.min.js"></script>
+<script src="statics/libs/app.js"></script>
+<script type="text/javascript">
+var vm = new Vue({
+	el:'#rrapp',
+	data:{
+		username: '',
+		password: '',
+		captcha: '',
+		error: false,
+		errorMsg: '',
+		src: 'captcha.jpg'
+	},
+	beforeCreate: function(){
+		if(self != top){
+			top.location.href = self.location.href;
+		}
+	},
+	mounted: function () {
+    	var oRemember = document.getElementById('remember');
+    	if(this.getCookie('user') && this.getCookie('pswd')){
+        	this.username = this.getCookie('user');
+     		this.password  = this.getCookie('pswd');
+          	oRemember.checked = true;
+         };
+	      oRemember.onchange = function(){
+	      if(!this.checked){
+	         vm.delCookie('user');
+	         vm.delCookie('pswd');
+	      }
+	    };
+  	},
+	methods: {
+		refreshCode: function(){
+			this.src = "captcha.jpg?t=" + $.now();
+		},
+		login: function (event) {
+		 	if(remember.checked){ 
+		        vm.setCookie('user',this.username,30);
+		        vm.setCookie('pswd',this.password,30);
+	        };
+			var data = "username="+vm.username+"&password="+vm.password+"&captcha="+vm.captcha;
+			$.ajax({
+				type: "POST",
+			    url: "sys/login",
+			    data: data,
+			    dataType: "json",
+			    success: function(result){
+					if(result.code == 0){//登录成功
+						parent.location.href ='index.html';
+					}else{
+						vm.error = true;
+						vm.errorMsg = result.msg;
+						
+						vm.refreshCode();
+					}
+				}
+			});
+		},
+		setCookie: function(name,value,day){
+   			 var date = new Date();
+   			 date.setDate(date.getDate() + day);
+    		 document.cookie = name + '=' + value + ';expires='+ date;
+ 		 },
+		getCookie: function(name){
+		    var reg = RegExp(name+'=([^;]+)');
+		    var arr = document.cookie.match(reg);
+		    if(arr){
+		      return arr[1];
+		    }else{
+		      return '';
+		    }
+		  },
+		delCookie: function(name){
+    		this.setCookie(name,null,-1);
+  		}
+	}
+});
+</script>
+
+
+</body>
+</html>

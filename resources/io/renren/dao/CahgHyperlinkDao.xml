@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgHyperlinkDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgHyperlinkEntity">
+		select * from cahg_hyperlink where link_id = #{value}
+	</select>
+
+	<select id="headList" resultType="io.renren.entity.CahgHyperlinkEntity">
+		select * from cahg_hyperlink where type = 0 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="rootList" resultType="io.renren.entity.CahgHyperlinkEntity">
+		select * from cahg_hyperlink where type !=0 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_hyperlink 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgHyperlinkEntity" useGeneratedKeys="true" keyProperty="linkId">
+		insert into cahg_hyperlink
+		(
+			`name`, 
+			`url`, 
+			`remark`,
+			`type`
+		)
+		values
+		(
+			#{name}, 
+			#{url}, 
+			#{remark},
+			#{type}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgHyperlinkEntity">
+		update cahg_hyperlink 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="type != null">`type` = #{type}</if>
+		</set>
+		where link_id = #{linkId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_hyperlink where link_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_hyperlink where link_id in 
+		<foreach item="linkId" collection="array" open="(" separator="," close=")">
+			#{linkId}
+		</foreach>
+	</delete>
+
+</mapper>

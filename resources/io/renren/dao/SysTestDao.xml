@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysTestDao">
+
+	<select id="queryObject" resultType="io.renren.entity.SysTestEntity">
+		select * from sys_test where test_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.SysTestEntity">
+		select * from sys_test 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_test 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.SysTestEntity">
+		insert into sys_test
+		(
+			`test_id`, 
+			`name`,
+			`start_date`
+		)
+		values
+		(
+			#{testId}, 
+			#{name},
+			#{startDate}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysTestEntity">
+		update sys_test 
+		<set>
+			<if test="name != null">`name` = #{name}</if>
+		</set>
+		where test_id = #{testId}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_test where test_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_test where test_id in 
+		<foreach item="testId" collection="array" open="(" separator="," close=")">
+			#{testId}
+		</foreach>
+	</delete>
+
+</mapper>

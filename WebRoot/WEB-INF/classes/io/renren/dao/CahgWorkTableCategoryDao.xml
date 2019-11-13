@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgWorkTableCategoryDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgWorkTableCategoryEntity">
+		select * from cahg_work_table_category where work_table_category_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgWorkTableCategoryEntity">
+		select * from cahg_work_table_category 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryAllList" resultType="io.renren.entity.CahgWorkTableCategoryEntity">
+		select * from cahg_work_table_category 
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_work_table_category 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgWorkTableCategoryEntity" useGeneratedKeys="true" keyProperty="workTableCategoryId">
+		insert into cahg_work_table_category
+		(
+			`name`, 
+			`remark`, 
+			`create_time`
+		)
+		values
+		(
+			#{name}, 
+			#{remark}, 
+			sysdate()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgWorkTableCategoryEntity">
+		update cahg_work_table_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="remark != null">`remark` = #{remark} </if>
+		</set>
+		where work_table_category_id = #{workTableCategoryId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_work_table_category where work_table_category_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_work_table_category where work_table_category_id in 
+		<foreach item="workTableCategoryId" collection="array" open="(" separator="," close=")">
+			#{workTableCategoryId}
+		</foreach>
+	</delete>
+
+</mapper>

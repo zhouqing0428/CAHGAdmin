@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysDeptWorkStandardDao">
+
+	<select id="queryObject" resultType="io.renren.entity.SysDeptWorkStandardEntity">
+		select * from sys_dept_work_standard where work_standard_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.SysDeptWorkStandardEntity">
+		select * from sys_dept_work_standard where 1=1
+		<if test="deptId != null">
+			and dept_id = #{deptId}
+		</if>
+		 ORDER BY create_date desc 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+		
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_dept_work_standard where 1=1
+		<if test="deptId != null">
+			and dept_id = #{deptId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.SysDeptWorkStandardEntity" useGeneratedKeys="true" keyProperty="workStandardId">
+		insert into sys_dept_work_standard
+		(
+			`title`, 
+			`file_name`, 
+			`file_old_name`, 
+			`create_date`, 
+			`create_user_id`, 
+			`dept_id`
+		)
+		values
+		(
+			#{title}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			sysdate(), 
+			#{createUserId}, 
+			#{deptId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysDeptWorkStandardEntity">
+		update sys_dept_work_standard 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="lasteUpdateUserId != null">`laste_update_user_id` = #{lasteUpdateUserId}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where work_standard_id = #{workStandardId}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_dept_work_standard where work_standard_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_dept_work_standard where work_standard_id in 
+		<foreach item="workStandardId" collection="array" open="(" separator="," close=")">
+			#{workStandardId}
+		</foreach>
+	</delete>
+
+</mapper>

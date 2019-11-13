@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgJobDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgJobEntity">
+		<!-- select * from cahg_job where job_id = #{value} -->
+		select a.*,(select b.name from sys_user b where a.create_user_id = b.user_id) as createUser from cahg_job a where job_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgJobEntity">
+	<!-- 	select a.*,c.status as user_job_status,(select bb.name from sys_user bb where a.create_user_id=bb.user_id) as createUser,
+		   (select cc.name from sys_user cc where a.last_update_user_id=cc.user_id) as lastUpdateName
+		   from cahg_job a join (select b.job_id,b.status from cahg_job_flow b where b.user_id=#{userId} group by b.job_id) as c 
+				where a.job_id=c.job_id
+				and a.job_id in (select d.job_id from cahg_job_flow d where d.user_id=#{userId})
+				order by c.status,a.create_user_date desc  -->
+		SELECT a.*, c.status AS user_job_status, (
+				SELECT bb.name
+				FROM sys_user bb
+				WHERE a.create_user_id = bb.user_id
+				) AS createUser, (
+				SELECT cc.name
+				FROM sys_user cc
+				WHERE a.last_update_user_id = cc.user_id
+				) AS lastUpdateName
+		FROM cahg_job a
+			JOIN (SELECT b.job_id, b.status
+				FROM cahg_job_flow b
+				WHERE b.user_id = #{userId}
+				GROUP BY b.job_id
+				) c
+		WHERE a.job_id = c.job_id
+			AND a.job_id IN (SELECT d.job_id
+				FROM cahg_job_flow d
+				WHERE d.user_id = #{userId})
+		<if test="userJobStatus != null and userJobStatus.trim() != ''">
+		 	 and c.`status`= #{userJobStatus}
+		</if>
+		ORDER BY c.status, a.create_user_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_job 
+	</select>
+	<!-- 查询待办工作数量 -->
+	<select id="queryjobCount" resultType="int">
+		select count(*) from cahg_job a 
+		join (select b.job_id from cahg_job_flow b where b.user_id=#{userId} and b.`status`=#{status} group by b.job_id) as c
+		 where a.job_id=c.job_id
+	</select>
+	<!-- 查询总工作数量 -->
+	<select id="queryPersonTotal" resultType="int">
+		select count(*) from cahg_job a 
+				join (select b.job_id from cahg_job_flow b where b.user_id=#{userId} group by b.job_id) as c
+				 where a.job_id=c.job_id
+	</select>	
+	 
+	 <!-- 查询第一流转人 -->
+	  <select id="queryFirstFlowUser" resultType="io.renren.entity.SysUserEntity">
+	   select * from sys_user  u
+	     where u.user_id = (select a.user_id from cahg_job_flow a where a.job_id=#{cahgJobId} and  first_flow = 1 limit 0,1)
+	 </select>
+	 
+	 <select id="quryJobDetailList" resultType="io.renren.entity.JobDetailEntity">
+	   <!--  select * from cahg_job_detail where job_id=#{jobId} -->
+	 	select a.*,(select b.name from sys_user b where b.user_id=a.create_user_id) as flowUserName,
+	 	(select c.name from sys_user c where c.user_id=a.flow_user_id) as nextUserName
+ 		   from cahg_job_detail a where a.job_id=#{jobId}
+	 </select>
+	 
+	 <select id="queryUserJobStatus" resultType="java.util.HashMap">
+         select a.status from cahg_job_flow a where  a.job_id = #{jobId} and a.user_id=#{userId} group by a.job_id
+	 </select>
+	 
+	<insert id="saveAndGetKey" parameterType="io.renren.entity.CahgJobEntity">
+		insert into cahg_job
+		(
+			`job_id`, 
+			`title`, 
+			`content`, 
+			`status`, 
+			`urgent_status`, 
+			`create_user_id`, 
+			`create_user_date`, 
+			`file_name`, 
+			`file_old_name`, 
+			`end_time`
+		)
+		values
+		(
+			#{jobId}, 
+			#{title}, 
+			#{content}, 
+			#{status}, 
+			#{urgentStatus}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{endTime}
+		)
+		 <selectKey keyProperty="jobId" resultType="java.lang.Integer" >
+            SELECT @@IDENTITY AS jobId
+      </selectKey>
+	</insert>
+	
+	<insert id="saveJobFlow"  parameterType="io.renren.entity.JobFlow">
+	   insert into cahg_job_flow (job_id,user_id,status,first_flow)
+	    values (#{jobId},#{userId},#{status},#{firstFlow})
+	</insert>
+	
+	<!-- 添加一跟工作进条记录 -->
+	<insert id="saveJobDetail"  parameterType="io.renren.entity.JobFlow">
+	  insert into cahg_job_detail
+	  (content,
+	  create_user_id,
+	  create_user_date,
+	  job_id,
+	  flow_user_id
+	  ) 
+	  values(
+	  #{content},
+	  #{createUserId},
+	  sysdate(),
+	  #{jobId},
+	  #{flowUserId}
+	  )
+	</insert>	
+	 
+	<update id="update" parameterType="io.renren.entity.CahgJobEntity">
+		update cahg_job 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="urgentStatus != null">`urgent_status` = #{urgentStatus}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserDate != null">`create_user_date` = #{createUserDate}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="lastUpdateUserDate != null">`last_update_user_date` = #{lastUpdateUserDate}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="endTime != null">`end_time` = #{endTime}</if>
+		</set>
+		where job_id = #{jobId}
+	</update>
+	
+	<update id="updateJobStatus" parameterType="io.renren.entity.CahgJobEntity">
+		update cahg_job 
+		<set>
+		   <if test="status != null">`status` = #{status}, </if>
+		   <if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+		   `last_update_user_date` = sysdate()
+		</set>
+		where job_id = #{jobId}
+	</update>
+	
+	<update id="updateJobFlowStatus" parameterType="io.renren.entity.CahgJobEntity">
+		update cahg_job_flow 
+		<set>
+		   <if test="status != null">`status` = #{status}, </if>
+		</set>
+		where job_id = #{jobId} and status = 0
+	</update>
+	<update id="updateNextJobFlowStatus">
+		update cahg_job_flow 
+		<set>
+		   <if test="status != null">`status` = #{status} </if>
+		</set>
+		where job_id = #{jobId} and user_id = #{userId}
+	</update>
+	
+	<update id="updateAllJobFlowStatu">
+		update cahg_job_flow 
+		<set>
+		   <if test="status != null">`status` = #{status} </if>
+		</set>
+		where job_id = #{jobId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_job where job_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_job where job_id in 
+		<foreach item="jobId" collection="array" open="(" separator="," close=")">
+			#{jobId}
+		</foreach>
+	</delete>
+
+</mapper>

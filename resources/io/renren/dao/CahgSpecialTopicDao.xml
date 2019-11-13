@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgSpecialTopicDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgSpecialTopicEntity">
+		select a.*,(select b.name from sys_dept b where a.dept_id=b.dept_id) as deptName,
+           (select c.name from cahg_special_topic_category c where a.special_topic_category_id=c.special_topic_category_id) as categoryName
+ 			from cahg_special_topic a  where a.special_topic_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgSpecialTopicEntity">
+		select a.*,(select b.name from sys_dept b where a.dept_id=b.dept_id) as deptName,
+           (select c.name from cahg_special_topic_category c where a.special_topic_category_id=c.special_topic_category_id) as categoryName
+ 			from cahg_special_topic a  where 1=1
+ 		<if test="title != null and title.trim() != ''">
+			and a.title like concat('%',#{title},'%')
+		</if>
+		<if test="specialTopicCategoryId != null and specialTopicCategoryId.trim() != ''">
+			and a.special_topic_category_id=#{specialTopicCategoryId}
+		</if>
+		 order by a.create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_special_topic where 1=1
+		<if test="title != null and title.trim() != ''">
+			and title like concat('%',#{title},'%')
+		</if>
+		<if test="specialTopicCategoryId != null and specialTopicCategoryId.trim() != ''">
+			and special_topic_category_id=#{specialTopicCategoryId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgSpecialTopicEntity" useGeneratedKeys="true" keyProperty="specialTopicId">
+		insert into cahg_special_topic
+		(
+			`title`, 
+			`content`, 
+			`author`, 
+			`file_name`, 
+			`file_old_name`, 
+			`create_user_id`, 
+			`create_date`, 
+			`status`, 
+			`dept_id`, 
+			`special_topic_category_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{author}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{status}, 
+			#{deptId}, 
+			#{specialTopicCategoryId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgSpecialTopicEntity">
+		update cahg_special_topic 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="specialTopicCategoryId != null">`special_topic_category_id` = #{specialTopicCategoryId},</if>
+			`last_update_user_date` = sysdate()
+		</set>
+		where special_topic_id = #{specialTopicId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_special_topic where special_topic_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_special_topic where special_topic_id in 
+		<foreach item="specialTopicId" collection="array" open="(" separator="," close=")">
+			#{specialTopicId}
+		</foreach>
+	</delete>
+
+</mapper>

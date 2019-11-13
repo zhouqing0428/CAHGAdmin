@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgCustomNewsDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgCustomNewsEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name from cahg_custom_news n
+		 where n.custom_news_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgCustomNewsEntity">
+		  select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name
+			 from cahg_custom_news n where 1 = 1
+        <if test="title != null and title.trim() != ''">
+			and `title` like concat('%',#{title},'%')
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+       ORDER BY stick DESC,rank='', rank ASC , create_date DESC  
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_custom_news where 1 = 1
+		<if test="title != null and title.trim() != ''">
+			and `title` like concat('%',#{title},'%')
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgCustomNewsEntity" useGeneratedKeys="true" keyProperty="customNewsId">
+		insert into cahg_custom_news
+		(
+			`title`, 
+			`content`, 
+			`author`, 
+			`create_user_id`, 
+			`create_date`, 
+			`status`, 
+			`rank`, 
+			`stick`, 
+			`dept_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{author}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{status}, 
+			#{rank}, 
+			#{stick}, 
+			#{deptId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgCustomNewsEntity">
+		update cahg_custom_news 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="rank != null">`rank` = #{rank}, </if>
+			<if test="stick != null">`stick` = #{stick}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where custom_news_id = #{customNewsId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_custom_news where custom_news_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_custom_news where custom_news_id in 
+		<foreach item="customNewsId" collection="array" open="(" separator="," close=")">
+			#{customNewsId}
+		</foreach>
+	</delete>
+
+</mapper>

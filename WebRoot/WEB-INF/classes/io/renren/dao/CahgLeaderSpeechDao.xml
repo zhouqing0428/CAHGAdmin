@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgLeaderSpeechDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgLeaderSpeechEntity">
+		select * from cahg_leader_speech where leader_speech_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgLeaderSpeechEntity">
+		select * from cahg_leader_speech  order by create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_leader_speech 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgLeaderSpeechEntity" useGeneratedKeys="true" keyProperty="leaderSpeechId">
+		insert into cahg_leader_speech
+		(
+			`title`, 
+			`content`, 
+			`file_name`,
+			`file_old_name`,  
+			`remark`, 
+			`create_user_id`, 
+			`create_date`, 
+			type,
+			`status`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{remark}, 
+			#{createUserId}, 
+			SYSDATE(), 
+			#{type},
+			#{status}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgLeaderSpeechEntity">
+		update cahg_leader_speech 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="status != null">`status` = #{status},</if>
+			<if test="type != null">`type` = #{type},</if>
+			`last_update_date` = SYSDATE() 
+		</set>
+		where leader_speech_id = #{leaderSpeechId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_leader_speech where leader_speech_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_leader_speech where leader_speech_id in 
+		<foreach item="leaderSpeechId" collection="array" open="(" separator="," close=")">
+			#{leaderSpeechId}
+		</foreach>
+	</delete>
+
+</mapper>

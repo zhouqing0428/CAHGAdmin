@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgAddressBookDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgAddressBookEntity">
+	<!-- 	select a.* from cahg_address_book a where a.address_look_id = #{value} -->
+		select a.*,(select b.name from sys_dept b where a.dept_id=b.dept_id)  as deptName from cahg_address_book a where a.address_look_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgAddressBookEntity">
+		<!-- select * from cahg_address_book where 1=1 -->
+		select a.*,(select b.name from sys_dept b where a.dept_id=b.dept_id)  as deptName 
+		from cahg_address_book a where 1=1 
+		<if test="deptId != null and deptId.trim() != ''">
+			and `dept_id` = #{deptId}
+		</if> 
+		<if test="name !=null  and name.trim() != ''">
+			and `name` like concat('%',#{name},'%')
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_address_book where 1=1
+		<if test="deptId != null and deptId.trim() != ''">
+			and `dept_id` = #{deptId}
+		</if> 
+		<if test="name !=null  and name.trim() != ''">
+			and `name` like concat('%',#{name},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgAddressBookEntity" useGeneratedKeys="true" keyProperty="addressLookId">
+		insert into cahg_address_book
+		(
+			`name`, 
+			`mobile`, 
+			`interior`, 
+			`external`, 
+			`create_date`, 
+			`create_user_id`, 
+			`job_number`, 
+			`duty`, 
+			`dept_id`
+		)
+		values
+		(
+			#{name}, 
+			#{mobile}, 
+			#{interior}, 
+			#{external}, 
+			#{createDate}, 
+			#{createUserId}, 
+			#{jobNumber}, 
+			#{duty}, 
+			#{deptId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgAddressBookEntity">
+		update cahg_address_book 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="interior != null">`interior` = #{interior}, </if>
+			<if test="external != null">`external` = #{external}, </if>
+			<if test="lastUpdateDate != null">`last_update_date` = #{lastUpdateDate}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="jobNumber != null">`job_number` = #{jobNumber}, </if>
+			<if test="duty != null">`duty` = #{duty}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}</if>
+		</set>
+		where address_look_id = #{addressLookId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_address_book where address_look_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_address_book where address_look_id in 
+		<foreach item="addressLookId" collection="array" open="(" separator="," close=")">
+			#{addressLookId}
+		</foreach>
+	</delete>
+
+</mapper>

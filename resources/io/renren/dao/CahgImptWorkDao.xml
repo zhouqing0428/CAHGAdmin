@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgImptWorkDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgImptWorkEntity">
+		select a.*,(select b.name from sys_dept b where b.dept_id=a.dept_id) as deptName
+		 from cahg_impt_work a where impt_work_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgImptWorkEntity">
+		select a.*,(select b.name from sys_dept b where b.dept_id=a.dept_id) as deptName from cahg_impt_work a order by create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_impt_work 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgImptWorkEntity">
+		insert into cahg_impt_work
+		(
+			`impt_work_id`, 
+			`title`, 
+			`content`, 
+			`author`, 
+			`file_name`, 
+			`file_old_name`, 
+			`create_user_id`, 
+			`create_date`, 
+			`status`, 
+			`dept_id`
+		)
+		values
+		(
+			#{imptWorkId}, 
+			#{title}, 
+			#{content}, 
+			#{author}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{status}, 
+			#{deptId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgImptWorkEntity">
+		update cahg_impt_work 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId},</if>
+			`last_update_user_date` = sysdate()
+		</set>
+		where impt_work_id = #{imptWorkId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_impt_work where impt_work_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_impt_work where impt_work_id in 
+		<foreach item="imptWorkId" collection="array" open="(" separator="," close=")">
+			#{imptWorkId}
+		</foreach>
+	</delete>
+
+</mapper>

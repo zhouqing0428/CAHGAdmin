@@ -1,0 +1,8 @@
+jdbc.url=jdbc\:mysql\://211.147.238.85\:3306/cahgtest?useUnicode\=true&characterEncoding\=UTF-8&zeroDateTimeBehavior\=convertToNull&allowMultiQueries\=true
+jdbc.username=chanlg
+jdbc.password=mobset61443
+jdbc.initialSize=5
+jdbc.maxActive=30
+jdbc.minPoolSize=2
+jdbc.maxIdleTime=30000
+jdbc.idleConnectionTestPeriod=100

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysApplyInfoDao">
+
+	<select id="queryObject" resultType="io.renren.entity.SysApplyInfoEntity">
+		select * from sys_apply_info where apply_info_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.SysApplyInfoEntity">
+		select * from sys_apply_info  
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<!-- 查询报名人 与活动关系信息 -->
+	<select id="queryDetailList" resultType="io.renren.entity.SysApplyInfoDetailEntity">
+		SELECT b.title,b.expense ,a.* from sys_apply_info a ,sys_activity b where a.activity_id=b.activity_id
+		<if test="activity_id !=null  and activity_id.trim() != ''">
+		    and b.activity_id=#{activity_id}
+		</if>
+		<!-- 数据库命名是 mobile命名为moblie，所张错就错  -->
+		<if test="mobile !=null  and mobile.trim() != ''">
+		    and a.moblie=#{mobile}
+		</if>
+		<if test="name !=null  and name.trim() != ''">
+		   and a.`name`=#{name}
+		</if>
+		<if test="check_state !=null  and check_state.trim() != ''">
+		    and a.check_state=#{check_state}
+		</if>
+		<if test="pay_state !=null  and pay_state.trim() != ''">
+		    and a.pay_state=#{pay_state}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_apply_info 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.SysApplyInfoEntity">
+		insert into sys_apply_info
+		(
+			`apply_info_id`, 
+			`name`, 
+			`moblie`, 
+			`pay_time`, 
+			`check_state`, 
+			`pay_state`, 
+			`sms_state`, 
+			`note`, 
+			`pay_info`, 
+			`activity_id`, 
+			`bs_user_id`
+		)
+		values
+		(
+			#{applyInfoId}, 
+			#{name}, 
+			#{moblie}, 
+			#{payTime}, 
+			#{checkState}, 
+			#{payState}, 
+			#{smsState}, 
+			#{note}, 
+			#{payInfo}, 
+			#{activityId}, 
+			#{bsUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysApplyInfoEntity">
+		update sys_apply_info 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="moblie != null">`moblie` = #{moblie}, </if>
+			<if test="payTime != null">`pay_time` = #{payTime}, </if>
+			<if test="checkState != null">`check_state` = #{checkState}, </if>
+			<if test="payState != null">`pay_state` = #{payState}, </if>
+			<if test="smsState != null">`sms_state` = #{smsState}, </if>
+			<if test="note != null">`note` = #{note}, </if>
+			<if test="payInfo != null">`pay_info` = #{payInfo}, </if>
+			<if test="activityId != null">`activity_id` = #{activityId}, </if>
+			<if test="bsUserId != null">`bs_user_id` = #{bsUserId}</if>
+		</set>
+		where apply_info_id = #{applyInfoId}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_apply_info where apply_info_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_apply_info where apply_info_id in 
+		<foreach item="applyInfoId" collection="array" open="(" separator="," close=")">
+			#{applyInfoId}
+		</foreach>
+	</delete>
+	
+	<!-- 审核通过 -->
+	<update id="approved">
+	     UPDATE sys_apply_info a set a.check_state='2'  WHERE a.apply_info_id IN
+	     <foreach item="applyInfoId" collection="array" open="(" separator="," close=")">
+			#{applyInfoId}
+		</foreach>
+	</update>
+	
+	<!-- 审核失败 -->
+	<update id="auditFailure">
+	     UPDATE sys_apply_info a set a.check_state='1'  WHERE a.apply_info_id IN
+	     <foreach item="applyInfoId" collection="array" open="(" separator="," close=")">
+			#{applyInfoId}
+		</foreach>
+	</update>
+	
+	<!-- 确认付款 -->
+	<update id="paid">
+	     UPDATE sys_apply_info a set a.pay_state='2'  WHERE a.apply_info_id IN
+	     <foreach item="applyInfoId" collection="array" open="(" separator="," close=")">
+			#{applyInfoId}
+		</foreach>
+	</update>
+	
+	
+</mapper>

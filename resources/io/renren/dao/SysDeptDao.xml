@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysDeptDao">
+
+	<select id="queryObject" resultType="io.renren.entity.SysDeptEntity">
+		select * from sys_dept where dept_id = #{value}
+	</select>
+	
+	<select id="queryObjectByName" resultType="io.renren.entity.SysDeptEntity">
+		select * from sys_dept where name =#{name} LIMIT 1
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.SysDeptEntity">
+		select d.dept_id,d.name,d.remark,d.file_old_name,(select p.name from sys_dept p where p.dept_id = d.parent_id) as parentName from sys_dept d where 1=1
+		<if test="deptId != null">
+			and d.dept_id=#{deptId}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<select id="queryDeptList" resultType="io.renren.entity.SysDeptEntity">
+		select * from sys_dept
+	 </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_dept where 1=1
+		<if test="deptId != null">
+			and dept_id=#{deptId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.SysDeptEntity" useGeneratedKeys="true" keyProperty="deptId">
+		insert into sys_dept
+		(
+			`parent_id`, 
+			`name`, 
+			`duty`, 
+			`regime`, 
+			`work_standard`, 
+			`remark`,
+			`role`
+		)
+		values
+		(
+			#{parentId}, 
+			#{name}, 
+			#{duty}, 
+			#{regime}, 
+			#{workStandard}, 
+			#{remark},
+			#{role}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysDeptEntity">
+		update sys_dept 
+		<set>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="duty != null">`duty` = #{duty}, </if>
+			<if test="role != null">`role` = #{role}, </if>
+			<if test="regime != null">`regime` = #{regime}, </if>
+			<if test="workStandard != null">`work_standard` = #{workStandard}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where dept_id = #{deptId}
+	</update>
+	
+	<update id="deleteFile" parameterType="io.renren.entity.SysDeptEntity">
+		update sys_dept set file_name=NULL,file_old_name=NULL where dept_id in
+		<foreach item="deptId" collection="array" open="(" separator="," close=")">
+			#{deptId}
+		</foreach>
+	</update>
+	
+	<delete id="delete">
+		delete from sys_dept where dept_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_dept where dept_id in 
+		<foreach item="deptId" collection="array" open="(" separator="," close=")">
+			#{deptId}
+		</foreach>
+	</delete>
+
+</mapper>

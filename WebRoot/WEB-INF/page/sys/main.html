@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+#parse("sys/header.html")
+<title>控制台</title>
+</head>
+<body>
+欢迎登录
+<div></div>
+<br>
+<!-- <a href="../oa/cahgjob.html">工作督办</a> -->
+<script type="text/javascript">
+$(document).ready(function(){
+ 	/* $.get("../cahgjob/jobCount", function(r){
+ 		 $("div").append(" <h3 class='text-primary'>待办工作: "+r.total+"</h3>");
+         if(r.total>0){
+           alert("您有"+r.total+"个待办工作，请在 工作督办中 查看");
+         }
+	}); */
+	$.get("../cahgletter/queryUnReadTotal", function(r){
+         if(r.count>0){
+           $("div").append(" <h3 class='text-primary'>未读信封: "+r.count+"</h3>");
+           alert("您有"+r.count+"封未读信，请注意");
+         }
+	});
+	$.get("../cahgletterflow/queryUnDealTotal", function(r){
+         if(r.count>0){
+           $("div").append(" <h3 class='text-primary'>未处理转交信封: "+r.count+"</h3>");
+           alert("您有"+r.count+"封处理转交信封，请注意");
+         }
+	});
+})
+</script>
+</body>
+</html>

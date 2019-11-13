@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+<script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/ueditor.all.min.js"> </script>
+   
+    <script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form id="form" class="form-horizontal"  method="post"enctype="multipart/form-data">
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">文件名称</div>
+			   	<div class="col-sm-10">
+			      <input id="imgName" type="text" class="form-control" v-model="pictureEntity.imgName" placeholder="文件名称"/> 
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">显示状态</div>
+			   	<div class="col-sm-10">
+			       <label class="radio-inline">
+					  <input type="radio" name="imgState" value="0" v-model="pictureEntity.imgState"/>隐藏
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="imgState" value="1" v-model="pictureEntity.imgState"/>显示
+					</label>
+			    </div>
+			</div>
+	
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">文件图片替换</div>
+			   	<div class="col-sm-12">
+			   		<input type="hidden" v-model="pictureEntity.imgId" id="imgId" /> 
+			   		<input type="hidden" v-model="pictureEntity.imgUrl" id="imgurl" /> 
+			   		<input type="hidden" v-model="pictureEntity.imgNameTemp" id="imgNameTemp" /> 
+			   		
+			   		<input type="file" id="file" name="file"/>
+			   		<button type="button" onclick="uploadFile2();">替换文件</button>
+			   	</div>
+			   
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/js/sys/picture.js?_${date.systemTime}"></script>
+<script type="text/javascript">
+
+	function uploadFile2(){
+		//debugger;
+		var imgId = $("#imgId").val();
+		//排序
+		var sysRank=$("#sysRank").val();
+	    $.ajaxFileUpload({
+	    	url: "../picture/upload"+"?imgId="+imgId+"&sysRank="+sysRank,
+			type: "post",
+			fileElementId: "file", // 上传文件的id、name属性名
+		    success: function(data){
+			 	if(data != null){
+			 		debugger;
+			 		$("#imgName").val(data.fileNames);
+			 		$.get("../picture/info/" + data.imgId, function(r){
+		                vm.pictureEntity = r.pictureEntity;
+		            });
+					alert("上传成功");
+				}else{
+					vm.tips = false;
+					alert("上传失败");
+				} 
+			}
+	   	});
+	}
+	
+</script>
+</body>
+</html>

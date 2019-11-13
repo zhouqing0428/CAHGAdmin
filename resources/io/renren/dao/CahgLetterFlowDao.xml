@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgLetterFlowDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgLetterFlowEntity">
+		select * from cahg_letter_flow where letter_flow_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgLetterFlowEntity">
+		select a.*, (select b.name from sys_user b where a.create_user_id=b.user_id) as userName 
+		from cahg_letter_flow a where 1=1
+		<if test="userId != null">
+			and a.user_id=#{userId}
+		</if>
+		order by a.`status` asc, a.create_time desc 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_letter_flow where user_id=#{userId} 
+	</select>
+	
+	<select id="queryUnDealTotal" resultType="int">
+		select count(*) from cahg_letter_flow where user_id=#{userId} and status=0
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgLetterFlowEntity" useGeneratedKeys="true" keyProperty="letterFlowId">
+		insert into cahg_letter_flow
+		(
+			`dispose_time`, 
+			`require`, 
+			`status`, 
+			`create_user_id`, 
+			`create_time`, 
+			`user_id`, 
+			`letter_title`, 
+			`letter_id`
+		)
+		values
+		(
+			#{disposeTime}, 
+			#{require}, 
+			#{status}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{userId}, 
+			#{letterTitle}, 
+			#{letterId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgLetterFlowEntity">
+		update cahg_letter_flow 
+		<set>
+			<if test="disposeTime != null">`dispose_time` = #{disposeTime}, </if>
+			<if test="require != null">`require` = #{require}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="letterTitle != null">`letter_title` = #{letterTitle}, </if>
+			<if test="letterId != null">`letter_id` = #{letterId}</if>
+		</set>
+		where letter_flow_id = #{letterFlowId}
+	</update>
+	
+	<update id="hadDeal">
+		update cahg_letter_flow 
+		 	set status=1
+	    where letter_flow_id in 
+		<foreach item="letterFlowId" collection="array" open="(" separator="," close=")">
+			#{letterFlowId}
+		</foreach>
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_letter_flow where letter_flow_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_letter_flow where letter_flow_id in 
+		<foreach item="letterFlowId" collection="array" open="(" separator="," close=")">
+			#{letterFlowId}
+		</foreach>
+	</delete>
+
+</mapper>

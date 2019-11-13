@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgOfficeWorkDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgOfficeWorkEntity">
+		select a.*,(select b.`name` from cahg_office_work_category b where a.office_work_category_id=b.office_work_category_id) as categoryName
+		from cahg_office_work a where a.office_work_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgOfficeWorkEntity">
+			SELECT a.*, (
+					SELECT b.`name`
+					FROM cahg_office_work_category b
+					WHERE a.office_work_category_id = b.office_work_category_id
+					) AS categoryName
+			FROM cahg_office_work a
+		<if test="officeWorkCategoryId != null and officeWorkCategoryId.trim() != ''">
+			where a.office_work_category_id = #{officeWorkCategoryId}
+		</if>
+		ORDER BY create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_office_work 
+		<if test="officeWorkCategoryId != null and officeWorkCategoryId.trim() != ''">
+			where office_work_category_id = #{officeWorkCategoryId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgOfficeWorkEntity" useGeneratedKeys="true" keyProperty="officeWorkId">
+		insert into cahg_office_work
+		(
+			`title`, 
+			`remark`, 
+			`file_name`, 
+			`file_old_name`, 
+			`office_work_category_id`, 
+			`create_date`, 
+			`create_user_id`
+		)
+		values
+		(
+			#{title}, 
+			#{remark}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{officeWorkCategoryId}, 
+			sysdate(), 
+			#{createUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgOfficeWorkEntity">
+		update cahg_office_work 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="officeWorkCategoryId != null">`office_work_category_id` = #{officeWorkCategoryId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where office_work_id = #{officeWorkId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_office_work where office_work_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_office_work where office_work_id in 
+		<foreach item="officeWorkId" collection="array" open="(" separator="," close=")">
+			#{officeWorkId}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+ 	<script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/ueditor2.config.js"></script><!-- 精简过的编辑器 -->
+    <script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/ueditor.all.min.js"> </script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="${rc.contextPath}/ueditor/lang/zh-cn/zh-cn.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		 <div class="grid-btn">
+			<!-- #if($shiro.hasPermission("cahgletter:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("cahgletter:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("cahgletter:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end -->
+			<a class="btn btn-primary" @click="hadRead">&nbsp;设为已读</a>
+			<a class="btn btn-success" @click="show">&nbsp;显示</a>
+			<a class="btn btn-danger" @click="hide">&nbsp;隐藏</a>
+			<a class="btn btn-info" @click="flow">&nbsp;转交</a>
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    <div>
+       <input v-model="cahgLetter.letterId" style="display: none">
+    </div>
+    <div v-show="detail" class="panel panel-default">
+		<div class="panel-heading">信内容</div>
+		<div class="row">
+   <div id="content" class="center-block" style="width:75%;">
+		<!-- {{cahgLetter.content}}$("#id").html(val) 写在VUE 里面 不能直接渲染 -->
+   </div>
+</div>
+<div style="background-color: #6699CC;height: 1px;width: 100%"></div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">回信标题</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgReplyLetter.title" placeholder="回信标题"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">内容</div>
+			   	<div class="col-sm-12">
+			      <!-- <input type="text" class="form-control" v-model="cahgReplyLetter.content" placeholder="内容"/> -->
+			         <!-- 编辑器 -->
+			       <script id="editor" type="text/plain" style="width:900px;height:500px;"></script>
+			    </div>
+			</div> 
+									
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveReplyLetter" value="确定回信"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+	
+	<!-- 信封流转 -->
+	 <div v-show="letterFlow" class="panel panel-default">
+		<div class="panel-heading">信封转交</div>
+		<form class="form-horizontal">
+				<div class="form-group">
+			   	<div class="col-sm-2 control-label">科室</div>
+			   	<div class="col-sm-10">
+			       <select id="deptId"  class="form-control" >
+					         <option>--请选择科室--</option>
+					         <option v-for="item in deptList" :value="item.deptId "  >
+					         	 {{item.name }}
+					         </option>
+					     </select>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">信封转交</div>
+			   	<div class="col-sm-10">
+			       <select id="flowUserId"  class="form-control" >
+				      <option value="">--请选择转交人--</option>
+				 </select>
+			    </div>
+			</div>
+		
+						<div class="form-group">
+			   	<div class="col-sm-2 control-label">处理时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgLetterFlow.disposeTime" placeholder="处理时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">要求</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgLetterFlow.require" placeholder="要求"/>
+			    </div>
+			</div>
+									
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveLetterFlow" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+    //实例化编辑器
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    var ue = UE.getEditor('editor');
+</script>
+<script src="${rc.contextPath}/js/oa/cahgletter.js?_${date.systemTime}"></script>
+</body>
+</html>

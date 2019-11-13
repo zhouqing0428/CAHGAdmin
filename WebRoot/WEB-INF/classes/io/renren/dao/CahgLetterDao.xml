@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgLetterDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgLetterEntity">
+		select * from cahg_letter where letter_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgLetterEntity">
+		select * from cahg_letter where 1=1
+	    <if test="userId !=null">
+	    	 and to_user_id=#{userId}
+	    </if>
+	    and is_delete=0
+	    ORDER BY status,create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_letter where to_user_id=#{userId} and is_delete=0
+	</select>
+	
+	<select id="queryUnReadTotal" resultType="int">
+		select count(*) from cahg_letter where to_user_id=#{userId} and is_reply=0
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgLetterEntity" useGeneratedKeys="true" keyProperty="letterId">
+		insert into cahg_letter
+		(
+			`title`, 
+			`content`, 
+			`author`, 
+			`status`, 
+			`create_date`, 
+			`create_user_id`, 
+			`to_user_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{author}, 
+			#{status}, 
+			#{createDate}, 
+			#{createUserId}, 
+			#{toUserId}
+		)
+	</insert>
+	<!-- 添加回信内容 -->
+	<insert id="saveReplyLetter" parameterType="io.renren.entity.CahgReplyLetterEntity" useGeneratedKeys="true" keyProperty="replyLetter">
+		insert into cahg_reply_letter
+		(
+			`title`, 
+			`content`, 
+			`create_date`, 
+			`create_user_id`, 
+			`letter_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			sysdate(), 
+			#{createUserId}, 
+			#{letterId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgLetterEntity">
+		update cahg_letter 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="toUserId != null">`to_user_id` = #{toUserId}</if>
+		</set>
+		where letter_id = #{letterId}
+	</update>
+	
+	<update id="updateReplyStatus">
+		UPDATE cahg_letter set is_reply=#{isReply} WHERE letter_id=#{letterId}
+	</update>
+	
+	<update id="hadRead">
+	     update cahg_letter
+	     <set>
+	     	`status` = 1,
+	     </set> 
+	     where letter_id in
+	     <foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</update>
+	<update id="show">
+	     update cahg_letter
+	     <set>
+	     	`hidden` = 0,
+	     </set> 
+	     where letter_id in
+	     <foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</update>
+	<update id="hide">
+	     update cahg_letter
+	     <set>
+	     	`hidden` = 1,
+	     </set> 
+	     where letter_id in
+	     <foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</update>
+	
+	<!-- 伪删除 -->
+	<update id="updateIsDelete">
+	     update cahg_letter
+	     <set>
+	     	`is_delete` = 1,
+	     </set> 
+	     where letter_id in
+	     <foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_letter where letter_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_letter where letter_id in 
+		<foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</delete>
+	
+	<!-- 删除回信 -->
+	<delete id="deleteReplyBatch">
+		delete from cahg_reply_letter where letter_id in 
+		<foreach item="letterId" collection="array" open="(" separator="," close=")">
+			#{letterId}
+		</foreach>
+	</delete>
+
+</mapper>

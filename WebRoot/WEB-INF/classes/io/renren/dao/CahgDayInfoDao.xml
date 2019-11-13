@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgDayInfoDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgDayInfoEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name 
+		  from cahg_day_info n where day_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgDayInfoEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name
+ 		from cahg_day_info n where 1 = 1
+		<if test="dayTitle != null and dayTitle.trim() != ''">
+			and `day_title` like concat('%',#{dayTitle},'%')
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+		ORDER BY  day_rank='',day_rank ASC ,create_date DESC  
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_day_info where 1 = 1
+		<if test="dayTitle != null and dayTitle.trim() != ''">
+			and `day_title` like concat('%',#{dayTitle},'%')
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgDayInfoEntity" useGeneratedKeys="true" keyProperty="dayId">
+		insert into cahg_day_info
+		(
+			`day_title`, 
+			`day_content`, 
+			`day_status`, 
+			`day_stick`, 
+			`day_rank`, 
+			`dept_id`, 
+			`author`, 
+			`create_date`, 
+			`create_user_id`
+		)
+		values
+		(
+			#{dayTitle}, 
+			#{dayContent}, 
+			#{dayStatus}, 
+			#{dayStick}, 
+			#{dayRank}, 
+			#{deptId}, 
+			#{author}, 
+			sysdate(), 
+			#{createUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgDayInfoEntity">
+		update cahg_day_info 
+		<set>
+			<if test="dayTitle != null">`day_title` = #{dayTitle}, </if>
+			<if test="dayContent != null">`day_content` = #{dayContent}, </if>
+			<if test="dayStatus != null">`day_status` = #{dayStatus}, </if>
+			<if test="dayStick != null">`day_stick` = #{dayStick}, </if>
+			<if test="dayRank != null">`day_rank` = #{dayRank}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where day_id = #{dayId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_day_info where day_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_day_info where day_id in 
+		<foreach item="dayId" collection="array" open="(" separator="," close=")">
+			#{dayId}
+		</foreach>
+	</delete>
+
+</mapper>

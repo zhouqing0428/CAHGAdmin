@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgDutyScheduleDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgDutyScheduleEntity">
+		select * from cahg_duty_schedule where duty_schedule_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgDutyScheduleEntity">
+		select * from cahg_duty_schedule where 1=1
+		<if test="mobile != null and mobile.trim() != ''">
+			and `mobile` = #{mobile}
+		</if>
+
+		<if test="name != null and name.trim() != ''">
+		<!-- 	and `name` = #{name} -->
+			and `name` like concat('%',#{name},'%')
+		</if>
+		<if test="status != null and status.trim() != ''">
+			and `status` = #{status}
+		</if>
+		<if test="category != null and category.trim() != ''">
+			and `category` = #{category}
+		</if>
+		<if test="start_date != null">  <!-- xml格式的，所以不允许出现类似“>”这样的字符,需要用XML转义字符，&lt;代表 “<”,&gt;代表“>” -->
+			and `work_time` &gt;= #{start_date}
+		</if>
+		<if test="end_date != null">
+			and `work_time` &lt;= #{end_date}
+		</if>
+		order by work_time DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_duty_schedule where 1=1
+		<if test="mobile != null and mobile.trim() != ''">
+			and `mobile` = #{mobile}
+		</if>
+
+		<if test="name != null and name.trim() != ''">
+		<!-- 	and `name` = #{name} -->
+			and `name` like concat('%',#{name},'%')
+		</if>
+		<if test="status != null and status.trim() != ''">
+			and `status` = #{status}
+		</if>
+		<if test="category != null and category.trim() != ''">
+			and `category` = #{category}
+		</if>
+		<if test="start_date != null">  <!-- xml格式的，所以不允许出现类似“>”这样的字符,需要用XML转义字符，&lt;代表 “<”,&gt;代表“>” -->
+			and `work_time` &gt;= #{start_date}
+		</if>
+		<if test="end_date != null">
+			and `work_time` &lt;= #{end_date}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgDutyScheduleEntity" useGeneratedKeys="true" keyProperty="dutyScheduleId">
+		insert into cahg_duty_schedule
+		(
+			`name`, 
+			`mobile`, 
+			`interior`, 
+			`external`, 
+			`work_time`, 
+			`remark`, 
+			`status`, 
+			`create_user_id`, 
+			`create_date`, 
+			`category`
+		)
+		values
+		(
+			#{name}, 
+			#{mobile}, 
+			#{interior}, 
+			#{external}, 
+			#{workTime}, 
+			#{remark}, 
+			#{status}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{category}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgDutyScheduleEntity">
+		update cahg_duty_schedule 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="interior != null">`interior` = #{interior}, </if>
+			<if test="external != null">`external` = #{external}, </if>
+			<if test="workTime != null">`work_time` = #{workTime}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="category != null">`category` = #{category},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where duty_schedule_id = #{dutyScheduleId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_duty_schedule where duty_schedule_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_duty_schedule where duty_schedule_id in 
+		<foreach item="dutyScheduleId" collection="array" open="(" separator="," close=")">
+			#{dutyScheduleId}
+		</foreach>
+	</delete>
+
+</mapper>

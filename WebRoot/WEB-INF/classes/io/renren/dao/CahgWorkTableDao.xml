@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgWorkTableDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgWorkTableEntity">
+		select a.*,(select b.name from cahg_work_table_category b where b.work_table_category_id=a.work_table_category_id) as categoryName
+ from cahg_work_table a where a.work_table_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgWorkTableEntity">
+	select a.*,(select b.name from cahg_work_table_category b where b.work_table_category_id=a.work_table_category_id) as categoryName 
+		from cahg_work_table a where 1=1
+		<if test="workTableCategoryId != null and workTableCategoryId.trim() != ''">
+			and a.work_table_category_id=#{workTableCategoryId}
+		</if>
+		order by a.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_work_table  where 1=1
+		<if test="workTableCategoryId != null and workTableCategoryId.trim() != ''">
+			and work_table_category_id=#{workTableCategoryId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgWorkTableEntity" useGeneratedKeys="true" keyProperty="workTableId">
+		insert into cahg_work_table
+		(
+			`title`, 
+			`file_name`, 
+			`file_old_name`, 
+			`status`, 
+			`create_time`, 
+			`work_table_category_id`
+		)
+		values
+		(
+			#{title}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{status}, 
+			sysdate(), 
+			#{workTableCategoryId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgWorkTableEntity">
+		update cahg_work_table 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="workTableCategoryId != null">`work_table_category_id` = #{workTableCategoryId}</if>
+		</set>
+		where work_table_id = #{workTableId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_work_table where work_table_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_work_table where work_table_id in 
+		<foreach item="workTableId" collection="array" open="(" separator="," close=")">
+			#{workTableId}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,244 @@
+$(function () {
+    $("#jqGrid").jqGrid({
+        url: '../cahgimgnews/list',
+        datatype: "json",
+        colModel: [			
+			{ label: 'imgNewId', name: 'imgNewId', width: 50, key: true,hidden:true },
+			{ label: '新闻标题', name: 'imgNewTitle', width: 120 }, 			
+			/*{ label: '图标新闻内容', name: 'imgNewContent', width: 80 }, */			
+			/*{ label: '创建人', name: 'createUserId', width: 80 }, 			
+			{ label: '最后修改人', name: 'lastUpdateUserId', width: 80 },*/ 			
+			{ label: '作者', name: 'author', width: 50 }, 			
+			/*{ label: '科室ID', name: 'deptId', width: 80 }, 	*/	
+			/*{ label: '发布时间', name: 'createDate', width: 60 }, */
+			{ label: '发布时间', name: 'createDate', width: 80,formatter:'date',
+				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },
+			{ label: '发布科室', name: 'deptName', width: 50 },
+			{ label: '最后修改时间', name: 'lastUpdateDate', width: 80,hidden:true }, 
+			{ label: '状态', name: 'imgNewStatus', width: 40,formatter:function(value, options, row){
+				if(value == '0'){
+					return '<span class="label label-primary">显示</span>';  
+				}
+				if(value =='1'){
+					return '<span class="label label-danger">隐藏</span>';  
+				}
+			}  }, 			
+		/*	{ label: '置顶状态0:表示置顶', name: 'imgNewsStick', width: 80 }, */			
+			{ label: '排序号', name: 'imgNewsRank', width: 40,formatter:function(value, options, row){
+				if(value != null && value != ''&&value!='default'){
+					return value;  
+				}
+				else{
+					return "";
+				}
+			}  },
+			{ label: '标题图片', name: 'imgUrl', width: 80,formatter:function(value, options, row){
+				return '<img class="img-responsive" src="/file/upImg/imgNews/'+value+'">';} }
+        ],
+		viewrecords: true,
+        height: 530,
+        rowNum: 10,
+		rowList : [10,30,50],
+        rownumbers: true, 
+        rownumWidth: 25, 
+        autowidth:true,
+        multiselect: true,
+        pager: "#jqGridPager",
+        jsonReader : {
+            root: "page.list",
+            page: "page.currPage",
+            total: "page.totalPage",
+            records: "page.totalCount"
+        },
+        prmNames : {
+            page:"page", 
+            rows:"limit", 
+            order: "order"
+        },
+        gridComplete:function(){
+        	//隐藏grid底部滚动条
+        	$("#jqGrid").closest(".ui-jqgrid-bdiv").css({ "overflow-x" : "hidden" }); 
+        }
+    });
+});
+
+var vm = new Vue({
+	el:'#rrapp',
+	data:{
+		showList: true,
+		tips : false,
+		q : {
+			title : null,
+			author : null
+		},
+		title: null,
+		deptList:[],
+		cahgImgNews: {}
+	},
+	methods: {
+		query: function () {
+			vm.reload();
+		},
+		add: function(){
+			vm.showList = false;
+			vm.tips = false;
+			vm.title = "新增";
+			vm.cahgImgNews = {imgNewStatus:0};
+			UE.getEditor('editor').setContent('');  //编辑内容为空
+			$("#imgUrl").val("");
+			$("#imgUrlName").val("");
+			//获取部门信息
+			this.getDeptList();
+		},
+		update: function (event) {
+			var imgNewId = getSelectedRow();
+			if(imgNewId == null){
+				return ;
+			}
+			$("#selectedDept").attr("selected","selected");
+			vm.showList = false;
+            vm.title = "修改";
+            vm.tips=false;
+            $("#imgUrl").val("");
+			$("#imgUrlName").val("");
+            this.getDeptList();
+            vm.getInfo(imgNewId)
+		},
+		saveOrUpdate: function (event) {
+			
+			$("#selectedDept").removeAttr("selected");
+		    var content=UE.getEditor('editor').getContent();  //新闻内容
+		    vm.cahgImgNews.imgNewContent=content;
+		    vm.cahgImgNews.deptId=$("#deptId").val();
+		    vm.cahgImgNews.imgUrl=$("#imgUrlName").val();
+		    vm.cahgImgNews.imgNewsRank=$("#imgNewsRank").val();
+		    vm.cahgImgNews.createDate=$("#createDate").val();//时间
+			var url = vm.cahgImgNews.imgNewId == null ? "../cahgimgnews/save" : "../cahgimgnews/update";
+			$.ajax({
+				type: "POST",
+			    url: url,
+			    data: JSON.stringify(vm.cahgImgNews),
+			    success: function(r){
+			    	if(r.code === 0){
+						alert('操作成功', function(index){
+							vm.reload();
+						});
+					}else{
+						alert(r.msg);
+					}
+				},
+				complete : function(XMLHttpRequest, textStatus) { 
+					if(textStatus!="success"){
+						location.reload(true);
+					};
+				}
+			});
+		},
+		del: function (event) {
+			var imgNewIds = getSelectedRows();
+			if(imgNewIds == null){
+				return ;
+			}
+			
+			confirm('确定要删除选中的记录？', function(){
+				$.ajax({
+					type: "POST",
+				    url: "../cahgimgnews/delete",
+				    data: JSON.stringify(imgNewIds),
+				    success: function(r){
+						if(r.code == 0){
+							alert('操作成功', function(index){
+								$("#jqGrid").trigger("reloadGrid");
+							});
+						}else{
+							alert(r.msg);
+						}
+					},
+					complete : function(XMLHttpRequest, textStatus) { 
+						if(textStatus!="success"){
+							location.reload(true);
+						};
+					}
+				});
+			});
+		},
+	
+      stick	:function(){
+    	  var imgNewId = getSelectedRow();
+			if(imgNewId == null){
+				return ;
+			}
+			$.get("../cahgimgnews/stick/" + imgNewId, function(r) {
+				if(r.code == 0){
+					alert('操作成功', function(index){
+						$("#jqGrid").trigger("reloadGrid");
+					});
+				}else{
+					alert(r.msg);
+				}
+			});
+      },
+	  upImg: function(){
+		  if($("#imgUrl").val()==null||$("#imgUrl").val()==''){
+				alert("选择图片才能上传");
+				return ;
+			}
+		   $.ajaxFileUpload({
+					type: "POST",
+					secureuri: false, //一般设置为false
+					fileElementId: 'imgUrl', //文件上传的ID
+				    url: "../cahgimgnews/upImgUrl",
+				    //timeout : 50000, //超时时间设置，单位毫秒
+				    async: false,
+				    //maxFileSize:1024*1024, //大小限制1M
+			        //sizeErrorStr:"上传文件不能大于1M", 
+				    success: function(name){
+					 	if(name!="err"){
+					 		vm.tips = true;
+							var path="../upImg/imgNews/"+name;
+							$("#imgUrlName").val(name);
+				            $("#showImg").attr('src',path); 
+						}else{
+							alert("上传图片失败");
+						} 
+					},
+		   			error: function (data, status, e)//服务器响应失败处理函数
+	               {
+	                   alert('上传图片失败,服务器响应失败(可能是文件过大导致)');
+	                }
+			}); 
+		},
+		
+		getInfo: function(imgNewId){
+			$.get("../cahgimgnews/info/"+imgNewId, function(r){
+			    UE.getEditor('editor').setContent(r.cahgImgNews.imgNewContent);  //回显编辑内容 
+                vm.cahgImgNews = r.cahgImgNews;
+			    var path="../upImg/imgNews/"+vm.cahgImgNews.imgUrl;
+				$("#imgUrlName").val(vm.cahgImgNews.imgUrl);
+			    $("#showImg").attr('src',path);
+            });
+		},
+		//部门列表
+		getDeptList: function(){
+//			$.get("../sysdept/selectList", function(r){
+//				vm.deptList = r.list;
+//			});
+			$.get("../cahgimgnews/selectList", function(r){
+				vm.deptList = r.list;
+			});
+			
+		},
+		reload: function (event) {
+			$("#selectedDept").removeAttr("selected");
+			vm.showList = true;
+			var page = $("#jqGrid").jqGrid('getGridParam','page');
+			$("#jqGrid").jqGrid('setGridParam',{ 
+				postData : {
+					'imgNewTitle' : vm.q.title,
+					'author' : vm.q.author
+				},
+                page:page
+            }).trigger("reloadGrid");
+		}
+	}
+});

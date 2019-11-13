@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("cahgspecialtopiccategory:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("cahgspecialtopiccategory:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("cahgspecialtopiccategory:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">专题类别名称</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgSpecialTopicCategory.name" placeholder="专题类别名称"/>
+			    </div>
+			</div>
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">标题图片</div>
+			    	<div class="col-sm-10">
+			   	    <input type="file" style="float: left;" id="img"  name="img"  accept="image/jpg,image/jpeg,image/png,image/gif" multiple="" > 
+			   	      <input type="button" class="btn btn-default" @click="upImg" value="上传">
+			   	      <code v-show="tips" style="margin-top:4px;display: block;">图片已上传</code>
+			    	  <img style="display: none" alt="" id="showImg" class="img-responsive" src="">
+			          <input style="display: none" type="text" class="form-control" id="imgName" placeholder=""/>
+			    </div>
+			</div>  
+			
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgSpecialTopicCategory.remark" placeholder="备注"/>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">排序</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" id="rank"  v-model="cahgSpecialTopicCategory.rank" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" placeholder="排序"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态</div>
+			   	<div class="col-sm-10">
+			      <!-- <input type="text" class="form-control" v-model="cahgSpecialTopicCategory.status" placeholder="状态"/> -->
+			      <label class="radio-inline">
+					  <input type="radio" name="status" value="0" v-model="cahgSpecialTopicCategory.status"/> 显示
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="status" value="1" v-model="cahgSpecialTopicCategory.status"/> 隐藏
+					</label>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/js/news/cahgspecialtopiccategory.js?_${date.systemTime}"></script>
+</body>
+</html>

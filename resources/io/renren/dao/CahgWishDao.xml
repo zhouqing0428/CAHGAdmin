@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgWishDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgWishEntity">
+		select * from cahg_wish where wish_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgWishEntity">
+		select * from cahg_wish 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_wish 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgWishEntity" useGeneratedKeys="true" keyProperty="wishId">
+		insert into cahg_wish
+		(
+			`wish_center`, 
+			`wish_date`, 
+			`status`
+		)
+		values
+		(
+			#{wishCenter}, 
+			#{wishDate}, 
+			#{status}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgWishEntity">
+		update cahg_wish 
+		<set>
+			<if test="wishCenter != null">`wish_center` = #{wishCenter}, </if>
+			<if test="wishDate != null">`wish_date` = #{wishDate}, </if>
+			<if test="status != null">`status` = #{status}</if>
+		</set>
+		where wish_id = #{wishId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_wish where wish_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_wish where wish_id in 
+		<foreach item="wishId" collection="array" open="(" separator="," close=")">
+			#{wishId}
+		</foreach>
+	</delete>
+
+</mapper>

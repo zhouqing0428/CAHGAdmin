@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgSurveyQuestionDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgSurveyQuestionEntity">
+		select * from cahg_survey_question where survey_question_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgSurveyQuestionEntity">
+		select * from cahg_survey_question where 1=1 order by index_show desc,order_id='',order_id asc ,create_date desc 
+	   <!-- <if test="surveyId != null and surveyId.trim() != ''">
+		     and survey_id=#{surveyId}
+		</if> -->
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_survey_question 
+	</select>
+	<select id="queryPollSum" resultType="java.lang.Integer"> <!-- 如果sum本身汇总为null,需要设置为0 -->
+		select IFNULL(sum(poll),0)  from cahg_survey_answer WHERE survey_question_id=#{questionId}
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgSurveyQuestionEntity" useGeneratedKeys="true" keyProperty="surveyQuestionId">
+		insert into cahg_survey_question
+		(
+			`question`, 
+			`answer_type`, 
+			`status`, 
+			`order_id`, 
+			`create_user_id`, 
+			`create_date`, 
+			`survey_id`
+		)
+		values
+		(
+			#{question}, 
+			#{answerType}, 
+			#{status},
+			#{orderId},
+			#{createUserId}, 
+			sysdate(), 
+			#{surveyId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgSurveyQuestionEntity">
+		update cahg_survey_question 
+		<set>
+			<if test="question != null">`question` = #{question}, </if>
+			<if test="answerType != null">`answer_type` = #{answerType}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="orderId != null">`order_id` = #{orderId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="surveyId != null">`survey_id` = #{surveyId},</if>
+			`last_update_date` = sysdate()
+		</set>
+		where survey_question_id = #{surveyQuestionId}
+	</update>
+	
+	<update id="unIndexShow">
+		update cahg_survey_question set index_show=null where index_show = 0
+	</update>
+	<update id="indexShow">
+			update cahg_survey_question set index_show=0 where survey_question_id=#{surveyQuestionId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_survey_question where survey_question_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_survey_question where survey_question_id in 
+		<foreach item="surveyQuestionId" collection="array" open="(" separator="," close=")">
+			#{surveyQuestionId}
+		</foreach>
+	</delete>
+
+</mapper>

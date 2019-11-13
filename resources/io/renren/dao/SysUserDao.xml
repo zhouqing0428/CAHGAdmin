@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysUserDao">
+	<select id="queryObject" resultType="io.renren.entity.SysUserEntity">
+		<!-- select * from sys_user where user_id = #{value} -->
+		select u.*,(select d.name from sys_dept d where u.dept_id = d.dept_id) as dept_name from sys_user u where user_id = #{value}
+	</select>
+	
+	<select id="queryList" resultType="io.renren.entity.SysUserEntity">
+		<!-- select * from sys_user  -->
+		select u.*,(select d.name from sys_dept d where u.dept_id = d.dept_id) as dept_name from sys_user u
+		<where>
+			<if test="username != null and username.trim() != ''">
+				and `username` like concat('%',#{username},'%') 
+			</if>
+		</where>
+		order by user_id desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="selectList" resultType="io.renren.entity.SysUserEntity">
+		select * from sys_user  
+		<where>
+			<if test="deptId != null">
+				and `dept_id`= #{deptId} 
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from sys_user
+		<where>
+			<if test="username != null and username.trim() != ''">
+				and `username` like concat('%',#{username},'%') 
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryLetterLeaderCount" resultType="int">
+		select count(*) from sys_user where is_letter_leader=1
+	</select>
+	
+	<!-- 查询用户的所有权限 -->
+	<select id="queryAllPerms" resultType="String">
+		select m.perms from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+			LEFT JOIN sys_menu m on rm.menu_id = m.menu_id 
+		where ur.user_id = #{userId}
+	</select>
+	
+	<!-- 查询用户的所有菜单ID --> 
+	<select id="queryAllMenuId" resultType="Long">
+		select m.menu_id from sys_user_role ur 
+			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id 
+			LEFT JOIN sys_menu m on rm.menu_id = m.menu_id 
+		where ur.user_id = #{userId}
+	</select>
+	
+	<select id="queryByUserName" resultType="io.renren.entity.SysUserEntity">
+		select * from sys_user where username = #{username}
+	</select>
+	
+	<insert id="save" parameterType="io.renren.entity.SysUserEntity" useGeneratedKeys="true" keyProperty="userId">
+		insert into sys_user
+		(
+			`user_id`, 
+			`username`, 
+			`password`, 
+			`name`, 
+			`email`, 
+			`mobile`, 
+			`dept_id`, 
+			`status`, 
+			`photo`, 
+			`remark`, 
+			`intro`, 
+			`is_letter_leader`, 
+			`create_time`
+		)
+		values
+		(
+			#{userId}, 
+			#{username}, 
+			#{password},
+			#{name},  
+			#{email}, 
+			#{mobile},
+			#{deptId},
+			#{status}, 
+			#{photo}, 
+			#{remark}, 
+			#{intro}, 
+			#{isLetterLeader}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysUserEntity">
+		update sys_user 
+		<set> 
+			<if test="username != null">`username` = #{username}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="photo != null">`photo` = #{photo}, </if>
+			<if test="photo != null">`remark` = #{remark}, </if>
+			<if test="photo != null">`intro` = #{intro}, </if>	
+			<if test="photo != null">`is_letter_leader` = #{isLetterLeader}, </if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<update id="updatePassword" parameterType="map">
+		update sys_user set `password` = #{newPassword} 
+			where user_id = #{userId} and password = #{password}
+	</update>
+	
+	<update id="updateLetterLeader">
+		update sys_user set is_letter_leader=#{isLetterLeader} where user_id=#{userId}
+	</update>
+	<update id="canselLetterLeader">
+		update sys_user set is_letter_leader=0 where user_id in
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</update>
+	
+	<delete id="deleteBatch">
+		delete from sys_user where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	<!-- 	;
+		delete from sys_user_role where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach> -->
+	</delete>
+	
+	<delete id="deleteUserRole">
+		delete from sys_user_role where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+</mapper>

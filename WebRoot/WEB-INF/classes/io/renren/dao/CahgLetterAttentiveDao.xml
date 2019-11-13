@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgLetterAttentiveDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgLetterAttentiveEntity">
+		select * from cahg_letter_attentive where letter_attentive_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgLetterAttentiveEntity">
+		select * from cahg_letter_attentive 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_letter_attentive 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgLetterAttentiveEntity">
+		insert into cahg_letter_attentive
+		(
+			`letter_attentive_id`, 
+			`content`
+		)
+		values
+		(
+			#{letterAttentiveId}, 
+			#{content}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgLetterAttentiveEntity">
+		update cahg_letter_attentive 
+		<set>
+			<if test="content != null">`content` = #{content}</if>
+		</set>
+		where letter_attentive_id = #{letterAttentiveId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_letter_attentive where letter_attentive_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_letter_attentive where letter_attentive_id in 
+		<foreach item="letterAttentiveId" collection="array" open="(" separator="," close=")">
+			#{letterAttentiveId}
+		</foreach>
+	</delete>
+
+</mapper>

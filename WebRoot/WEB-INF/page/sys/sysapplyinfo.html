@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title> #parse("sys/header.html")
+</head>
+<body>
+	<div id="rrapp" v-cloak>
+		<div v-show="showList">
+		
+				 <form class="form-inline" role="form">
+		 <div class="form-group">
+	    	<select class="form-control" id="activity_id">
+	    		<option value="">活动名称</option> 
+            </select>  
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control"  id="mobile"  v-model="q.mobile" style="width: 180px;" placeholder="手机号码">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control"  id="name"  v-model="q.name" style="width: 180px;" placeholder="姓名">
+	</div>
+	<div class="form-group">
+	    	<select class="form-control" id="check_state">
+	    		<option value="">审核状态</option>
+		        <option value="0">未审核</option>  
+		        <option value="1">审核失败</option>  
+		         <option value="2">审核通过</option>  
+            </select>  
+	</div>
+	<div class="form-group">
+	    	<select class="form-control" id="pay_state">
+	    		<option value="">付款状态</option>
+		        <option value="0">未付款</option>  
+		        <option value="1">已提交</option>  
+		         <option value="2">已确认</option>  
+            </select>  
+	</div>
+	<button type="button" class="btn btn-default"  @click="query">查询刷新</button>
+</form>
+<br/> 
+		
+			<div class="grid-btn">
+				#if($shiro.hasPermission("sysapplyinfo:save")) <a
+					class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				#end #if($shiro.hasPermission("sysapplyinfo:update")) <a
+					class="btn btn-primary" @click="update"><i
+					class="fa fa-pencil-square-o"></i>&nbsp;修改</a> #end
+				#if($shiro.hasPermission("sysapplyinfo:delete")) <a
+					class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+				#end
+				#if($shiro.hasPermission("sysapplyinfo:approved"))
+					<a class="btn btn-success" @click="approved">&nbsp;审核通过</a>
+				#end
+				#if($shiro.hasPermission("sysapplyinfo:auditFailure"))
+			   		 <a class="btn btn-danger" @click="auditFailure">&nbsp;审核失败</a>
+				#end
+				#if($shiro.hasPermission("sysapplyinfo:paid"))
+			   		 <a class="btn btn-warning" @click="paid">&nbsp;确认付款</a>
+				#end
+				#if($shiro.hasPermission("sysapplyinfo:exports"))
+			   		 <a class="btn btn-primary" @click="exports">&nbsp;导出</a>
+				#end
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+
+		<div v-show="!showList" class="panel panel-default">
+			<div class="panel-heading">{{title}}</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">姓名</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.name" placeholder="姓名" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">手机号码</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.moblie" placeholder="手机号码" />
+					</div>
+				</div>
+				<div class="form-group" style="display: none">
+					<div class="col-sm-2 control-label">上传凭证时间</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.payTime" placeholder="上传凭证时间" />
+					</div>
+				</div>
+				<!-- <div class="form-group">
+			   	<div class="col-sm-2 control-label">审核状态</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="sysApplyInfo.checkState" placeholder="审核状态"/>
+			    </div>
+			</div> -->
+				<div class="form-group">
+					<div class="col-sm-2 control-label">审核状态</div>
+					<label class="radio-inline"> <input type="radio"
+						name="checkState" value="0" v-model="sysApplyInfo.checkState" />未审核
+					</label> <label class="radio-inline"> <input type="radio"
+						name="checkState" value="1" v-model="sysApplyInfo.checkState" />
+						审核失败
+					</label> <label class="radio-inline"> <input type="radio"
+						name="checkState" value="2" v-model="sysApplyInfo.checkState" />
+						审核通过
+					</label>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">付款状态</div>
+					<div class="col-sm-10">
+						<!-- <input type="text" class="form-control" v-model="sysApplyInfo.payState" placeholder="付款状态" /> -->
+						<label class="radio-inline"> <input type="radio"
+							name="payState" value="0" v-model="sysApplyInfo.payState" />未付款
+						</label> <label class="radio-inline"> <input type="radio"
+							name="payState" value="1" v-model="sysApplyInfo.payState" /> 已提交
+						</label> <label class="radio-inline"> <input type="radio"
+							name="payState" value="2" v-model="sysApplyInfo.payState" /> 已确认
+						</label>
+					</div>
+				</div>
+				<div class="form-group" style="display: none">
+					<div class="col-sm-2 control-label">短信状态</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.smsState" placeholder="短信状态" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">备注</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.note" placeholder="备注" />
+					</div>
+				</div>
+				<div class="form-group" style="display: none">
+					<div class="col-sm-2 control-label">支付凭证</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.payInfo" placeholder="支付凭证" />
+					</div>
+				</div>
+				<div class="form-group" style="display: none">
+					<div class="col-sm-2 control-label">活动id</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.activityId" placeholder="活动id" />
+					</div>
+				</div>
+				<div class="form-group" style="display: none;">
+					<div class="col-sm-2 control-label">代理商id</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control"
+							v-model="sysApplyInfo.bsUserId" placeholder="代理商id" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label"></div>
+					<input type="button" class="btn btn-primary" @click="saveOrUpdate"
+						value="确定" /> &nbsp;&nbsp;<input type="button"
+						class="btn btn-warning" @click="reload" value="返回" />
+				</div>
+			</form>
+		</div>
+	</div>
+	 
+ <div id="token" style="display: none">
+ <img id="payToken" alt="" class="img-responsive"  src=""> 
+ </div>
+	<script
+		src="${rc.contextPath}/js/sys/sysapplyinfo.js?_${date.systemTime}"></script>
+	<script type="text/javascript">
+		function payImg(name) {
+		   var path="http://yqishen.ngrok.cc/Hanxiq/uploadFiles/uploadImgs/"+name;
+		   $("#payToken").attr('src',path); 
+		   layer.open({
+           type: 1,
+           title: '付款凭证',
+           shadeClose: true,
+           shade: false,
+           maxmin: true, //开启最大化最小化按钮
+           area: ['400px', '600px'],
+           content: $("#token").html()
+}); 
+		}
+
+		function difiInfo(applyInfoId) {
+			layer.open({
+		     type: 2,
+		     title: '自定义字段信息',
+		     shadeClose: true,
+		     shade: false,
+		     maxmin: true, //开启最大化最小化按钮
+		     area: ['500px', '500px'],
+		     content: '../sysapplyinfo/toDifiInfo?apply_info_id='+applyInfoId
+        });
+		}
+
+		function buserInfo(bsUserId) {
+			 layer.open({
+		     type: 2,
+		     title: '自定义字段信息',
+		     shadeClose: true,
+		     shade: false,
+		     maxmin: true, //开启最大化最小化按钮
+		     area: ['500px', '500px'],
+		     content: '../sysapplyinfo/toUserDetail?bs_user_id='+bsUserId
+        });
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgSpecialTopicCategoryDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgSpecialTopicCategoryEntity">
+		select * from cahg_special_topic_category where special_topic_category_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgSpecialTopicCategoryEntity">
+		select * from cahg_special_topic_category  order by rank is null, rank
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_special_topic_category 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgSpecialTopicCategoryEntity" useGeneratedKeys="true" keyProperty="specialTopicCategoryId">
+		insert into cahg_special_topic_category
+		(
+			`name`, 
+			`remark`,
+			`rank`,
+			`img_name`,  
+			`status`
+		)
+		values
+		(
+			#{name}, 
+			#{remark}, 
+			#{rank},
+			#{imgName}, 
+			#{status}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgSpecialTopicCategoryEntity">
+		update cahg_special_topic_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="rank != null">`rank` = #{rank}, </if>
+			<if test="imgName != null">`img_name` = #{imgName}, </if>
+			<if test="status != null">`status` = #{status}</if>
+		</set>
+		where special_topic_category_id = #{specialTopicCategoryId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_special_topic_category where special_topic_category_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_special_topic_category where special_topic_category_id in 
+		<foreach item="specialTopicCategoryId" collection="array" open="(" separator="," close=")">
+			#{specialTopicCategoryId}
+		</foreach>
+	</delete>
+
+</mapper>

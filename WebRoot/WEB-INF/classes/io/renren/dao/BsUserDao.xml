@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.BsUserDao">
+
+	<select id="queryObject" resultType="io.renren.entity.BsUserEntity">
+		select * from bs_user where
+		bs_user_id = #{value}
+	</select>
+	
+	<select id="queryUserById" parameterType="java.lang.String" resultType="io.renren.entity.BsUserEntity">
+		select * from bs_user where
+		bs_user_id = #{bs_user_id}
+	</select>
+ 
+	<select id="queryList" resultType="io.renren.entity.BsUserEntity">
+		select * from bs_user where 1=1
+		
+		<if test="mobile != null and mobile.trim() != ''">
+			and `mobile` = #{mobile}
+		</if>
+
+		<if test="name != null and name.trim() != ''">
+			and `name` = #{name}
+		</if>
+
+		<if test="bs_user_state != null and bs_user_state.trim() != ''">
+			and `bs_user_state` = #{bs_user_state}
+		</if>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryAllList" resultType="io.renren.entity.BsUserEntity">
+		select * from bs_user
+	</select>
+	
+	<!-- 查询手机号码 -->
+	<select id="queryMobileList" resultType="io.renren.entity.BsUserEntity">
+		SELECT mobile from  bs_user WHERE bs_user_state in('1','2') and   bs_user_id in 
+			 <foreach item="bsUserId" collection="array" open="("
+					separator="," close=")">
+					#{bsUserId}
+			</foreach>
+	</select>
+	
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from bs_user
+	</select>
+
+	<insert id="save" parameterType="io.renren.entity.BsUserEntity">
+		insert into bs_user
+		(
+		`bs_user_id`,
+		`user_name`,
+		`password`,
+		`name`,
+		`mobile`,
+		`note`,
+		`appl_date`,
+		`bs_user_state`,
+		`sex`
+		)
+		values
+		(
+		#{bsUserId},
+		#{userName},
+		#{password},
+		#{name},
+		#{mobile},
+		#{note},
+		#{applDate},
+		#{bsUserState},
+		#{sex}
+		)
+	</insert>
+
+	<update id="update" parameterType="io.renren.entity.BsUserEntity">
+		update bs_user
+		<set>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="note != null">`note` = #{note}, </if>
+			<if test="applDate != null">`appl_date` = #{applDate}, </if>
+			<if test="bsUserState != null">`bs_user_state` = #{bsUserState}, </if>
+			<if test="sex != null">`sex` = #{sex}</if>
+		</set>
+		where bs_user_id = #{bsUserId}
+	</update>
+
+	<delete id="delete">
+		delete from bs_user where bs_user_id = #{value}
+	</delete>
+    
+	<delete id="deleteBatch">
+		delete from bs_user where  bs_user_id in
+		<foreach item="bsUserId" collection="array" open="("
+			separator="," close=")">
+			#{bsUserId}
+		</foreach>
+	</delete>
+
+	<!-- 审核失败 -->
+	<update id="auditFailure" parameterType="io.renren.entity.BsUserEntity">
+		update bs_user
+		<set>
+			bs_user_state =1 WHERE 1=1 and bs_user_id in
+			<foreach item="bsUserId" collection="array" open="("
+				separator="," close=")">
+				#{bsUserId}
+			</foreach>
+			 AND bs_user_state=0
+		</set>
+	</update>
+
+	<!-- 审核成功 -->
+	<update id="approved" parameterType="io.renren.entity.BsUserEntity">
+		update bs_user
+		<set>
+			bs_user_state =2 WHERE 1=1 and bs_user_id in
+			<foreach item="bsUserId" collection="array" open="("
+				separator="," close=")">
+				#{bsUserId}
+			</foreach>
+			 AND bs_user_state=0
+		</set>
+	</update>
+	
+	<!-- 解除审核 -->
+	<update id="removeAudit" parameterType="io.renren.entity.BsUserEntity">
+		update bs_user
+		<set>
+			bs_user_state =0 WHERE 1=1 and bs_user_id in
+			<foreach item="bsUserId" collection="array" open="("
+				separator="," close=")">
+				#{bsUserId}
+			</foreach>
+		</set>
+	</update>
+	
+
+</mapper>

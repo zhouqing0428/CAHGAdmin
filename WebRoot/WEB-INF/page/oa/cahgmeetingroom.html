@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+<script src="${rc.contextPath}/statics/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("cahgmeetingroom:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("cahgmeetingroom:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("cahgmeetingroom:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+			#if($shiro.hasPermission("cahgmeetingroom:usable"))
+				<a class="btn btn-success" @click="usable">&nbsp;非占用</a>
+			#end
+			#if($shiro.hasPermission("cahgmeetingroom:unusable"))
+				<a class="btn btn-danger" @click="unusable">&nbsp;占用</a>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">会议室编号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingRoom.num" placeholder="会议室编号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">名称</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingRoom.name" placeholder="名称"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingRoom.remark" placeholder="备注"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态</div>
+			   	<div class="col-sm-10">
+			        <label class="radio-inline">
+					  <input type="radio" name="status" value="0" v-model="cahgMeetingRoom.status"/> 非占用
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="status" value="1" v-model="cahgMeetingRoom.status"/> 占用
+					</label>
+			    </div>
+			</div>
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">结束时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" id="endTime" v-model="cahgMeetingRoom.endTime" onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" placeholder="会议结束时间"/>
+			    </div>
+			</div> 
+			
+			<div class="form-group" >
+			   	<div class="col-sm-2 control-label">申请科室</div>
+	                <div class="col-sm-10">
+					     <select id="deptId"  class="form-control">
+					        <option  :value="cahgMeetingRoom.deptId">{{cahgMeetingRoom.deptName}}</option>
+					       <!--    <option  value="0"></option> -->
+					         <option v-for="item in deptList" :value="item.deptId "  >
+					         	 {{item.name }}
+					         </option>
+					     </select>
+				      </div> 
+			</div> 
+									
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/js/oa/cahgmeetingroom.js?_${date.systemTime}"></script>
+</body>
+</html>

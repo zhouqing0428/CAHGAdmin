@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgSurveyAnswerDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgSurveyAnswerEntity">
+		select * from cahg_survey_answer where survey_answer_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgSurveyAnswerEntity">
+		select * from cahg_survey_answer where 1=1
+		<if test="surveyQuestionId != null and surveyQuestionId.trim() != ''">
+		     and survey_question_id=#{surveyQuestionId}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_survey_answer
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgSurveyAnswerEntity" useGeneratedKeys="true" keyProperty="surveyAnswerId">
+		insert into cahg_survey_answer
+		(
+			`choice_text`, 
+			`survey_question_id`
+		)
+		values
+		(
+			#{choiceText}, 
+			#{surveyQuestionId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgSurveyAnswerEntity">
+		update cahg_survey_answer 
+		<set>
+			<if test="choiceText != null">`choice_text` = #{choiceText}, </if>
+			<if test="poll != null">`poll` = #{poll}</if>
+		</set>
+		where survey_answer_id = #{surveyAnswerId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_survey_answer where survey_answer_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_survey_answer where survey_answer_id in 
+		<foreach item="surveyAnswerId" collection="array" open="(" separator="," close=")">
+			#{surveyAnswerId}
+		</foreach>
+	</delete>
+
+</mapper>

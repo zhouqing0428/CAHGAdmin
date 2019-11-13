@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgOfficeWorkCategoryDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgOfficeWorkCategoryEntity">
+		select * from cahg_office_work_category where office_work_category_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgOfficeWorkCategoryEntity">
+		select * from cahg_office_work_category ORDER BY create_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_office_work_category 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgOfficeWorkCategoryEntity" useGeneratedKeys="true" keyProperty="officeWorkCategoryId">
+		insert into cahg_office_work_category
+		(
+			`name`, 
+			`remark`, 
+			`create_user_id`,
+			`create_date`
+		)
+		values
+		(
+			#{name}, 
+			#{remark}, 
+			#{createUserId},
+			sysdate()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgOfficeWorkCategoryEntity">
+		update cahg_office_work_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="remark != null">`remark` = #{remark} </if>
+		</set>
+		where office_work_category_id = #{officeWorkCategoryId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_office_work_category where office_work_category_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_office_work_category where office_work_category_id in 
+		<foreach item="officeWorkCategoryId" collection="array" open="(" separator="," close=")">
+			#{officeWorkCategoryId}
+		</foreach>
+	</delete>
+
+</mapper>

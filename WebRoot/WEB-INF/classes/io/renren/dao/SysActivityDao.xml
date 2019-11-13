@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.SysActivityDao">
+
+	<select id="queryObject" resultType="io.renren.entity.SysActivityEntity">
+		select * from sys_activity where activity_id = #{value}
+	</select>
+   
+   <select id="activityList" resultType="io.renren.entity.SysActivityEntity">
+		select activity_id,title from sys_activity
+	</select>
+ 
+	<select id="queryList" resultType="io.renren.entity.SysActivityEntity">
+		select * from sys_activity 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_activity 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.SysActivityEntity" useGeneratedKeys="true" keyProperty="activityId">
+		insert into sys_activity
+		(
+			`title`, 
+			`number`, 
+			`expense`, 
+			`strart_date`, 
+			`end_date`, 
+			`content`, 
+			`effect`,
+			acti_img , 
+			`note`, 
+			`acti_cate_id`
+		)
+		values
+		(
+			#{title}, 
+			#{number}, 
+			#{expense}, 
+			#{strartDate}, 
+			#{endDate}, 
+			#{content}, 
+			#{effect},
+			#{actiImg},
+			#{note}, 
+			#{actiCateId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.SysActivityEntity">
+		update sys_activity 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="number != null">`number` = #{number}, </if>
+			<if test="expense != null">`expense` = #{expense}, </if>
+			<if test="strartDate != null">`strart_date` = #{strartDate}, </if>
+			<if test="endDate != null">`end_date` = #{endDate}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="effect != null">`effect` = #{effect}, </if>
+			<if test="actiImg != null">`acti_img` = #{actiImg}, </if>
+			<if test="note != null">`note` = #{note}, </if>
+			<if test="actiCateId != null">`acti_cate_id` = #{actiCateId}</if>
+		</set>
+		where activity_id = #{activityId}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_activity where activity_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_activity where activity_id in 
+		<foreach item="activityId" collection="array" open="(" separator="," close=")">
+			#{activityId}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgAfficheDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgAfficheEntity">
+		select a.*,(select d.name from sys_dept d where d.dept_id=a.dept_id) as deptName from cahg_affiche a where a.affiche_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgAfficheEntity">
+		select a.*,(select d.name from sys_dept d where d.dept_id=a.dept_id) as deptName from cahg_affiche a order by rank is null,rank,create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_affiche 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgAfficheEntity" useGeneratedKeys="true" keyProperty="afficheId">
+		insert into cahg_affiche
+		(
+			`title`, 
+			`status`, 
+			`rank`, 
+			`content`, 
+			`stick`, 
+			`create_user_id`, 
+			`create_date`, 
+			`author`, 
+			`dept_id`
+		)
+		values
+		(
+			#{title}, 
+			#{status}, 
+			#{rank}, 
+			#{content}, 
+			#{stick}, 
+			#{createUserId}, 
+			sysdate(), 
+			#{author}, 
+			#{deptId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgAfficheEntity">
+		update cahg_affiche 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<!-- <if test="rank != null">`rank` = #{rank}, </if> -->
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="stick != null">`stick` = #{stick}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId},</if>
+			`rank` = #{rank},
+			`last_update_date` = sysdate()
+		</set>
+		where affiche_id = #{afficheId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_affiche where affiche_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_affiche where affiche_id in 
+		<foreach item="afficheId" collection="array" open="(" separator="," close=")">
+			#{afficheId}
+		</foreach>
+	</delete>
+
+</mapper>

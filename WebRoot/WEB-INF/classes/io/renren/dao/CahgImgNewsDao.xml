@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgImgNewsDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgImgNewsEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name 
+		from cahg_img_news n  where n.img_new_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgImgNewsEntity">
+			select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name 
+		from cahg_img_news n where 1 = 1
+		<if test="imgNewTitle != null and imgNewTitle.trim() != ''">
+			and `img_new_title` like concat('%',#{imgNewTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+		 ORDER BY img_news_stick DESC,img_news_rank='', img_news_rank ASC , create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_img_news where 1=1
+		<if test="imgNewTitle != null and imgNewTitle.trim() != ''">
+			and `img_new_title` like concat('%',#{imgNewTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgImgNewsEntity" useGeneratedKeys="true" keyProperty="imgNewId">
+		insert into cahg_img_news
+		(
+			`img_new_title`, 
+			`img_new_content`, 
+			`create_date`, 
+			`last_update_date`, 
+			`create_user_id`, 
+			`last_update_user_id`, 
+			`img_url`, 
+			`author`, 
+			`dept_id`, 
+			`img_new_status`, 
+			`img_news_stick`
+		)
+		values
+		(
+			#{imgNewTitle}, 
+			#{imgNewContent}, 
+			sysdate(), 
+			#{lastUpdateDate}, 
+			#{createUserId}, 
+			#{lastUpdateUserId}, 
+			#{imgUrl}, 
+			#{author}, 
+			#{deptId}, 
+			#{imgNewStatus}, 
+			#{imgNewsStick} 
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgImgNewsEntity">
+		update cahg_img_news 
+		<set>
+			<if test="imgNewTitle != null">`img_new_title` = #{imgNewTitle}, </if>
+			<if test="imgNewContent != null">`img_new_content` = #{imgNewContent}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			`last_update_date` = sysdate(),
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="imgNewStatus != null">`img_new_status` = #{imgNewStatus}, </if>
+			<if test="imgNewsStick != null">`img_news_stick` = #{imgNewsStick}, </if>
+			<if test="imgNewsRank != null">`img_news_rank` = #{imgNewsRank}</if>
+		</set>
+		where img_new_id = #{imgNewId}
+	</update>
+	
+	<update id="unStick">
+	   update cahg_img_news set img_news_stick = NULL where img_news_stick = 0
+	</update>
+	
+	<update id="stick" parameterType="java.lang.Integer">
+		update cahg_img_news set img_news_stick = 0 where  img_new_id = #{imgNewId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_img_news where img_new_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_img_news where img_new_id in 
+		<foreach item="imgNewId" collection="array" open="(" separator="," close=")">
+			#{imgNewId}
+		</foreach>
+	</delete>
+
+</mapper>
