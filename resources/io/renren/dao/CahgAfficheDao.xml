@@ -8,7 +8,7 @@
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.CahgAfficheEntity">
-		select a.*,(select d.name from sys_dept d where d.dept_id=a.dept_id) as deptName from cahg_affiche a order by rank is null,rank,create_date DESC
+		select a.*,(select d.name from sys_dept d where d.dept_id=a.dept_id) as deptName from cahg_affiche a order by create_date DESC
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>

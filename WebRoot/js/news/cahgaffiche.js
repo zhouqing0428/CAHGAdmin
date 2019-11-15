@@ -15,7 +15,7 @@ $(function () {
 					return '<span class="label label-danger">隐藏</span>';  
 				}
 			}   }, 
-			{ label: '排序号', name: 'rank', width: 40 } ,
+			
 			{ label: '发布科室', name: 'deptName', width: 50 }
         ],
 		viewrecords: true,
