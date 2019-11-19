@@ -1,7 +1,6 @@
 package io.renren.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import io.renren.entity.SysDeptEntity;
 
@@ -25,5 +24,10 @@ public interface SysDeptDao extends BaseDao<SysDeptEntity> {
 	void updateContent(SysDeptEntity sysDept);
 	
 	void saveFile(SysDeptEntity deptFileId);
+	
 	void updateFileNull(Integer[] deptIds);
+	
+	String queryMaxNumber();
+	
+	List<SysDeptEntity> queryListByNumbers(List<String> numberList);
 }

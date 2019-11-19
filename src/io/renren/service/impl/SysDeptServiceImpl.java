@@ -54,19 +54,16 @@ public class SysDeptServiceImpl implements SysDeptService {
 
 	@Override
 	public List<SysDeptEntity> queryDeptList() {
-		// TODO Auto-generated method stub
 		return sysDeptDao.queryDeptList();
 	}
 
 	@Override
 	public SysDeptEntity queryObjectByName(String name) {
-		// TODO Auto-generated method stub
 		return sysDeptDao.queryObjectByName(name);
 	}
 
 	@Override
 	public void deleteFile(Integer[] deptIds) {
-		// TODO Auto-generated method stub
 		sysDeptDao.deleteFile(deptIds);
 	}
 
@@ -88,6 +85,16 @@ public class SysDeptServiceImpl implements SysDeptService {
 	@Override
 	public void updateFileNull(Integer[] deptIds) {
 		sysDeptDao.updateFileNull(deptIds);
+	}
+
+	@Override
+	public String queryMaxNumber() {
+		return sysDeptDao.queryMaxNumber();
+	}
+
+	@Override
+	public List<SysDeptEntity> queryListByNumbers(List<String> numberList) {
+		return sysDeptDao.queryListByNumbers(numberList);
 	}
 	
 }

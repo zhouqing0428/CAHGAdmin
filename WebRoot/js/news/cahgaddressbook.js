@@ -4,21 +4,20 @@ $(function () {
         datatype: "json",
         colModel: [			
 			{ label: 'addressLookId', name: 'addressLookId', width: 50, key: true,hidden: true },
-			{ label: '姓名', name: 'name', width: 80 }, 			
+			{ label: '姓名', name: 'name', width: 50 }, 			
 			{ label: '手机号码', name: 'mobile', width: 80 }, 			
-			{ label: '办公内线', name: 'interior', width: 80 }, 			
+			{ label: '办公内线', name: 'interior', width: 50 }, 			
 			{ label: '办公外线', name: 'external', width: 80 }, 			
-			{ label: '工号', name: 'jobNumber', width: 80 }, 			
+			{ label: '工号', name: 'jobNumber', width: 50 }, 			
 			{ label: '职务', name: 'duty', width: 80 }, 	
-			{ label: '科室', name: 'deptName', width: 80 }
-			/*{ label: '科室ID', name: 'deptId', width: 80 }		*/	
+			{ label: '科室', name: 'deptName', width: 140 }
         ],
 		viewrecords: true,
         height: 385,
         rowNum: 10,
 		rowList : [10,30,50],
         rownumbers: true, 
-        rownumWidth: 25, 
+        rownumWidth: 30, 
         autowidth:true,
         multiselect: true,
         pager: "#jqGridPager",
@@ -40,6 +39,24 @@ $(function () {
     });
     
     vm.getDeptList();
+    
+    jQuery.download = function(url, data, method){
+        // 获得url和data
+        if( url && data ){ 
+            // data 是 string 或者 array/object
+            data = typeof data == 'string' ? data : jQuery.param(data);
+            // 把参数组装成 form的  input
+            var inputs = '';
+            jQuery.each(data.split('&'), function(){ 
+                var pair = this.split('=');
+                console.log("pair           ",pair);
+                inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />';
+            });
+            // request发送请求
+            jQuery('<form action="'+ url +'" method="'+ (method||'post') +'">'+inputs+'</form>')
+            .appendTo('body').submit().remove();
+        };
+    };
 });
 
 var vm = new Vue({
@@ -77,9 +94,7 @@ var vm = new Vue({
             vm.getInfo(addressLookId)
 		},
 		saveOrUpdate: function (event) {
-			//$("#selectedDept").removeAttr("selected");
 			var url = vm.cahgAddressBook.addressLookId == null ? "../cahgaddressbook/save" : "../cahgaddressbook/update";
-			//vm.cahgAddressBook.deptId=$("#deptId").val();
 			
 			$.ajax({
 				type: "POST",
@@ -143,23 +158,18 @@ var vm = new Vue({
 			    	alert(r.msg, function(index){
 						$("#jqGrid").trigger("reloadGrid");
 					});
-					/*if(r.code == 0){
-						alert('导入成功', function(index){
-							$("#jqGrid").trigger("reloadGrid");
-						});
-						alert(r.code.msg, function(index){
-							$("#jqGrid").trigger("reloadGrid");
-						});
-					}else{
-						alert(r.msg);
-					}*/
 				}
 			});
 		},
 		//导出
 		exports:function(){
 			window.location.href="../cahgaddressbook/exports?deptId="+$("#dept_id").val()+"&name="+vm.q.name
-		} ,
+		},
+		//下载模板
+		download:function(){
+			$.download('../cahgaddressbook/downloadTemplate','find=commoncode','post');
+//			window.location.href="../cahgaddressbook/downloadTemplate";
+		},
 		getInfo: function(addressLookId){
 			$.get("../cahgaddressbook/info/"+addressLookId, function(r){
                 vm.cahgAddressBook = r.cahgAddressBook;

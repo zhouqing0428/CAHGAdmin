@@ -24,6 +24,9 @@ public class SysDeptEntity implements Serializable {
 	 */
 	private String parentName;
 	
+	//科室编码
+	private String number;
+	
 	//科室名称
 	private String name;
 	//添加人
@@ -287,5 +290,12 @@ public class SysDeptEntity implements Serializable {
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public String getNumber() {
+		return number;
+	}
+	public void setNumber(String number) {
+		this.number = number;
 	}
 }

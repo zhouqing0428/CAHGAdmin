@@ -4,22 +4,22 @@ $(function () {
         datatype: "json",
         colModel: [			
 			{ label: 'deptId', name: 'deptId', width: 50, key: true,hidden : true },
-			/*{ label: '', name: 'parentId', width: 80,hidden : true }, */			
+			{ label: '科室编码', name: 'number', width: 30},		
 			{ label: '科室名称', name: 'name', width: 80 },
 		/*	{ label: '上级部门', name: 'parentName', width: 80,hidden:true }, 		
 			{ label: '科室职责', name: 'duty', width: 80 }, 			
 			{ label: '科室制度', name: 'regime', width: 80 }, 			
 			{ label: '操作规范', name: 'workStandard', width: 80 }, 	
 			{ label: '岗位', name: 'role', width: 80 },	*/
-			{ label: '备注', name: 'remark', width: 80 },
-			{ label: '排序号', name: 'sysRank', width: 40 }
+			{ label: '排序号', name: 'sysRank', width: 30 },
+			{ label: '备注', name: 'remark', width: 100 }
         ],
 		viewrecords: true,
         height: 536,
         rowNum: 10,
 		rowList : [10,30,50],
         rownumbers: true, 
-        rownumWidth: 25, 
+        rownumWidth: 30, 
         autowidth:true,
         multiselect: true,
         pager: "#jqGridPager",
@@ -41,7 +41,6 @@ $(function () {
     });
     
 });
-
 
 var setting = {
 		data: {
@@ -85,9 +84,8 @@ var vm = new Vue({
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
-			//vm.sysDept = {};
 			vm.sysDept = {parentName:null,parentId:0};
-			UE.getEditor('editor').setContent('');  //编辑内容为空
+//			UE.getEditor('editor').setContent('');  //编辑内容为空
 
 			vm.getDept();
 		},
@@ -104,8 +102,8 @@ var vm = new Vue({
             vm.getInfo(deptId)
 		},
 		saveOrUpdate: function (event) {
-			var content=UE.getEditor('editor').getContent();  //通讯录内容
-			vm.sysDept.sysContent=content;
+//			var content=UE.getEditor('editor').getContent();  //通讯录内容
+//			vm.sysDept.sysContent=content;
 			var url = vm.sysDept.deptId == null ? "../sysdept/save" : "../sysdept/update";
 			//vm.sysDept.duty=($("#duty").val()).replace(/\n|\r\n/g,"<br>");
 			//vm.sysDept.regime=($("#regime").val()).replace(/\n|\r\n/g,"<br>");
@@ -161,10 +159,6 @@ var vm = new Vue({
 		},
 		getInfo: function(deptId){
 			$.get("../sysdept/info/"+deptId, function(r){
-				if(r.sysDept.sysContent!=null){
-					UE.getEditor('editor').setContent(r.sysDept.sysContent);  //回显编辑内容
-				}
-
                 vm.sysDept = r.sysDept;
                 $("#duty").val(vm.sysDept.duty);
                 $("#regime").val(vm.sysDept.regime);

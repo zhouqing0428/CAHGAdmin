@@ -42,4 +42,8 @@ public interface SysDeptService {
 
 	void updateFileNull(Integer[] deptIds);
 	
+	String queryMaxNumber();
+	
+	//根据科室编码批量查科室集合
+	List<SysDeptEntity> queryListByNumbers(List<String> numberList);
 }

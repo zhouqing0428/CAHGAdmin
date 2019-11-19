@@ -29,6 +29,7 @@ html { overflow-x:hidden; }
 }
 .grid-btn .btn{
 	margin-right:10px;
+	margin-top: 8px;
 }
 .pointer{cursor: pointer;}
 

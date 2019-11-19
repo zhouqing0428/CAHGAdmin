@@ -1,20 +1,12 @@
 package io.renren.controller;
 
-import io.renren.entity.SysDeptEntity;
-import io.renren.service.SysDeptService;
-import io.renren.utils.PageUtils;
-import io.renren.utils.R;
-import io.renren.utils.ShiroUtils;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import io.renren.entity.SysDeptEntity;
+import io.renren.service.SysDeptService;
+import io.renren.utils.PageUtils;
+import io.renren.utils.R;
+import io.renren.utils.ShiroUtils;
 
 
 /**
@@ -137,46 +135,46 @@ public class SysDeptController {
 		}*/
 		return R.ok().put("sysDept", sysDept);
 	}
-	//通讯录
-		@RequestMapping("/answerInfo")
-		public String answerInfo(HttpServletRequest request){
-			String name = request.getParameter("name");
-			String sysContent = request.getParameter("sysContent");
-			SysDeptEntity sysDept=null;
-			if(sysContent!=null&&!sysContent.isEmpty()){
-				int deptId=Integer.parseInt(sysContent);
-				sysDept = sysDeptService.queryObject(deptId);
-				request.setAttribute("sysContent", sysContent);
-				request.setAttribute("name",name);
-				request.setAttribute("sysDept", sysDept);
-			}
-			return "sys/sysDept.jsp";
+	
+	// 通讯录
+	@RequestMapping("/answerInfo")
+	public String answerInfo(HttpServletRequest request) {
+		String name = request.getParameter("name");
+		String sysContent = request.getParameter("sysContent");
+		SysDeptEntity sysDept = null;
+		if (sysContent != null && !sysContent.isEmpty()) {
+			int deptId = Integer.parseInt(sysContent);
+			sysDept = sysDeptService.queryObject(deptId);
+			request.setAttribute("sysContent", sysContent);
+			request.setAttribute("name", name);
+			request.setAttribute("sysDept", sysDept);
 		}
-		/**
-		 * 查询通讯录
-		 */
-		@ResponseBody
-		@RequestMapping("/selectListContent/{deptId}")
-		public R selectListContent(@PathVariable("deptId") Integer deptId){
-			//查询列表数据
-			SysDeptEntity sysDept = sysDeptService.queryListContent(deptId);
-			return R.ok().put("sysDept", sysDept);
-		}
-		
+		return "sys/sysDept.jsp";
+	}
 
-		
-		/**
-		 * 修改
-		 */
-		@ResponseBody
-		@RequestMapping("/updateContent")
-		@RequiresPermissions("sysdept:updateContent")
-		public R updateContent(@RequestBody SysDeptEntity sysDept){
-			sysDept.setLastUpdateUserId(ShiroUtils.getUserId());
-			sysDeptService.updateContent(sysDept);
-			
-			return R.ok();
-		}
+	/**
+	 * 查询通讯录
+	 */
+	@ResponseBody
+	@RequestMapping("/selectListContent/{deptId}")
+	public R selectListContent(@PathVariable("deptId") Integer deptId) {
+		// 查询列表数据
+		SysDeptEntity sysDept = sysDeptService.queryListContent(deptId);
+		return R.ok().put("sysDept", sysDept);
+	}
+
+	/**
+	 * 修改
+	 */
+	@ResponseBody
+	@RequestMapping("/updateContent")
+	@RequiresPermissions("sysdept:updateContent")
+	public R updateContent(@RequestBody SysDeptEntity sysDept) {
+		sysDept.setLastUpdateUserId(ShiroUtils.getUserId());
+		sysDeptService.updateContent(sysDept);
+
+		return R.ok();
+	}
 		
 	/**
 	 * 部门列表
@@ -189,7 +187,6 @@ public class SysDeptController {
 		
 		return R.ok().put("list", list);
 	}
-	
 	
 	/**
 	 * 选择菜单(添加、修改部门)
@@ -218,6 +215,14 @@ public class SysDeptController {
 	@RequiresPermissions("sysdept:save")
 	public R save(@RequestBody SysDeptEntity sysDept){
 		sysDept.setCreateUserId(ShiroUtils.getUserId());//新增的人id，时间
+		
+		String maxNumber = sysDeptService.queryMaxNumber();
+		if (StringUtils.isEmpty(maxNumber)) {
+			maxNumber = "01";
+		} else {
+			maxNumber = String.valueOf(Integer.parseInt(maxNumber) + 1);
+		}
+		sysDept.setNumber(maxNumber);
 
 		sysDeptService.save(sysDept);
 		
@@ -249,7 +254,6 @@ public class SysDeptController {
 		return R.ok();
 	}
 	
-	//
 	@ResponseBody
 	@RequestMapping("/delFile")
 	public R delFile(@RequestBody Integer[] deptIds){
