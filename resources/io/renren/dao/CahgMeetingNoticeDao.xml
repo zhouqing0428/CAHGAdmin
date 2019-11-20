@@ -8,7 +8,7 @@
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.CahgMeetingNoticeEntity">
-		select * from cahg_meeting_notice order by create_date desc
+		select *,(select name from sys_dept d where d.dept_id = c.dept_id) dept_name from cahg_meeting_notice c order by create_date desc
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
