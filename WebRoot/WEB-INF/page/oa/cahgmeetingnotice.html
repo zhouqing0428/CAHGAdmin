@@ -32,23 +32,60 @@
     <div v-show="!showList" class="panel panel-default">
 		<div class="panel-heading">{{title}}</div>
 		<form class="form-horizontal">
-											<div class="form-group">
-			   	<div class="col-sm-2 control-label">标题</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">会议名称</div>
 			   	<div class="col-sm-10">
-			      <input type="text" class="form-control" v-model="cahgMeetingNotice.title" placeholder="标题"/>
-			    </div>
-			</div>
-									<div class="form-group">
-			   	<div class="col-sm-2 control-label">会议内容</div>
-			   	<div class="col-sm-12">
-			     <!--  <input type="text" class="form-control" v-model="cahgMeetingNotice.content" placeholder="会议内容"/> -->
-			      <!-- 编辑器 -->
-			       <script id="editor" type="text/plain" style="width:1024px;height:450px;"></script>
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.title" placeholder="会议名称"/>
 			    </div>
 			</div>
 			
-									<div class="form-group" >
-			   	<div class="col-sm-2 control-label">科室</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">会议时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" id="meetingTime" v-model="cahgMeetingNotice.meetingTime"  onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" placeholder="会议时间"/>
+			    </div>
+			</div>
+			
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">会议地点</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.meetingPlace" placeholder="会议地点"/>
+			    </div>
+			</div>
+			
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">参会部门</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.meetingDep" placeholder="参会部门"/>
+			    </div>
+			</div>
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">参会人员</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.meetingPerson" placeholder="参会人员"/>
+			    </div>
+			</div>
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">会议要求</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.meetingRequire" placeholder="会议要求"/>
+			    </div>
+			</div>
+			
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">联系人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="cahgMeetingNotice.meetingContact" placeholder="联系人"/>
+			    </div>
+			</div>
+			
+			
+			<div class="form-group" >
+			   	<div class="col-sm-2 control-label">发文科室</div>
 	                <div class="col-sm-10">
 					     <select id="deptId" v-model="cahgMeetingNotice.deptId"  class="form-control">
 					      <!--    <option  :value="cahgMeetingNotice.deptId" id="selectedDept">{{cahgMeetingNotice.deptName}}</option> -->
@@ -65,7 +102,7 @@
 			      <input type="text" class="form-control" v-model="cahgMeetingNotice.author" placeholder="发文人"/>
 			    </div>
 			</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none">
 			   	<div class="col-sm-2 control-label">开始时间</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" id="startTime" v-model="cahgMeetingNotice.startTime"  onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" placeholder="开始时间"/>
@@ -157,7 +194,6 @@
 
     //实例化编辑器
     //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
-    var ue = UE.getEditor('editor');
 
 
    /*  function isFocus(e){

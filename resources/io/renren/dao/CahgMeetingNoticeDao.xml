@@ -32,7 +32,15 @@
 			`create_user_id`, 
 			`create_date`, 
 			`author`, 
-			`meeting_root_id`
+			`dept_id`, 
+			`meeting_root_id`,
+			`meeting_time`,
+			`meeting_place`,
+			`meeting_content`,
+			`meeting_require`,
+			`meeting_contact`,
+			`meeting_dep`,
+			`meeting_person`
 		)
 		values
 		(
@@ -47,7 +55,15 @@
 			#{createUserId}, 
 			sysdate(), 
 			#{author},
-			#{meetingRootId}
+			#{deptId},
+			#{meetingRootId},
+			#{meetingTime},
+			#{meetingPlace},
+			#{meetingContent},
+			#{meetingRequire},
+			#{meetingContact},
+			#{meetingDep},
+			#{meetingPerson}
 		)
 	</insert>
 	 
@@ -55,7 +71,14 @@
 		update cahg_meeting_notice 
 		<set>
 			<if test="title != null">`title` = #{title}, </if>
-			<if test="content != null">`content` = #{content}, </if>
+			<if test="meetingTime != null">`meeting_time` = #{meetingTime}, </if>
+			<if test="meetingPlace != null">`meeting_place` = #{meetingPlace}, </if>
+			<if test="meetingContent != null">`meeting_content` = #{meetingContent}, </if>
+			<if test="meetingRequire != null">`meeting_require` = #{meetingRequire}, </if>
+			<if test="meetingContact != null">`meeting_contact` = #{meetingContact}, </if>
+			<if test="meetingDep != null">`meeting_dep` = #{meetingDep}, </if>
+			<if test="meetingPerson != null">`meeting_person` = #{meetingPerson}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
 			<if test="startTime != null">`start_time` = #{startTime}, </if>
 			<if test="endTime != null">`end_time` = #{endTime}, </if>
 			<if test="status != null">`status` = #{status}, </if>

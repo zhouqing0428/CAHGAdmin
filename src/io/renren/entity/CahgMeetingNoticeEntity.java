@@ -13,6 +13,49 @@ import java.util.Date;
 public class CahgMeetingNoticeEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	public Date getMeetingTime() {
+		return meetingTime;
+	}
+
+	public void setMeetingTime(Date meetingTime) {
+		this.meetingTime = meetingTime;
+	}
+
+	public String getMeetingPlace() {
+		return meetingPlace;
+	}
+
+	public void setMeetingPlace(String meetingPlace) {
+		this.meetingPlace = meetingPlace;
+	}
+
+	public String getMeetingContent() {
+		return meetingContent;
+	}
+
+	public void setMeetingContent(String meetingContent) {
+		this.meetingContent = meetingContent;
+	}
+
+	public String getMeetingRequire() {
+		return meetingRequire;
+	}
+
+	public void setMeetingRequire(String meetingRequire) {
+		this.meetingRequire = meetingRequire;
+	}
+
+	public String getMeetingContact() {
+		return meetingContact;
+	}
+
+	public void setMeetingContact(String meetingContact) {
+		this.meetingContact = meetingContact;
+	}
+
+
+
+
 	//
 	private Integer meetingNoticeId;
 	// 标题
@@ -41,6 +84,37 @@ public class CahgMeetingNoticeEntity implements Serializable {
 	private Integer meetingRootId;
 	private String createUserName;
 	private String lastUpdateName;
+	
+	// 会议时间
+	private Date meetingTime;
+	//会议地点
+	private String meetingPlace;
+	//会议内容
+	private String meetingContent;
+	//会议要求
+	private String meetingRequire;
+	//联系人
+	private String meetingContact;
+	//参加部门及人员
+	private String meetingDep;
+	private String meetingPerson;
+	
+
+	public String getMeetingDep() {
+		return meetingDep;
+	}
+
+	public void setMeetingDep(String meetingDep) {
+		this.meetingDep = meetingDep;
+	}
+
+	public String getMeetingPerson() {
+		return meetingPerson;
+	}
+
+	public void setMeetingPerson(String meetingPerson) {
+		this.meetingPerson = meetingPerson;
+	}
 
 	public String getCreateUserName() {
 		return createUserName;
