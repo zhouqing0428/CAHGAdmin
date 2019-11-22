@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgFloatNewsDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgFloatNewsEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name 
+		from cahg_float_news n  where n.float_new_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgFloatNewsEntity">
+			select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as dept_name 
+		from cahg_float_news n where 1 = 1
+		<if test="floatNewTitle != null and floatNewTitle.trim() != ''">
+			and `float_new_title` like concat('%',#{floatNewTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+		 ORDER BY float_news_stick DESC,float_news_rank='', float_news_rank ASC , create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_float_news where 1=1
+		<if test="floatNewTitle != null and floatNewTitle.trim() != ''">
+			and `float_new_title` like concat('%',#{floatNewTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgFloatNewsEntity" useGeneratedKeys="true" keyProperty="floatNewId">
+		insert into cahg_float_news
+		(
+			`float_new_title`, 
+			`float_new_content`, 
+			`create_date`, 
+			`last_update_date`, 
+			`create_user_id`, 
+			`last_update_user_id`, 
+			`float_url`, 
+			`author`, 
+			`dept_id`, 
+			`float_new_status`, 
+			`float_news_stick`
+		)
+		values
+		(
+			#{floatNewTitle}, 
+			#{floatNewContent}, 
+			sysdate(), 
+			#{lastUpdateDate}, 
+			#{createUserId}, 
+			#{lastUpdateUserId}, 
+			#{floatUrl}, 
+			#{author}, 
+			#{deptId}, 
+			#{floatNewStatus}, 
+			#{floatNewsStick} 
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgFloatNewsEntity">
+		update cahg_float_news 
+		<set>
+			<if test="floatNewTitle != null">`float_new_title` = #{floatNewTitle}, </if>
+			<if test="floatNewContent != null">`float_new_content` = #{floatNewContent}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			`last_update_date` = sysdate(),
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="floatUrl != null">`float_url` = #{floatUrl}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="floatNewStatus != null">`float_new_status` = #{floatNewStatus}, </if>
+			<if test="floatNewsStick != null">`float_news_stick` = #{floatNewsStick}, </if>
+			<if test="floatNewsRank != null">`float_news_rank` = #{floatNewsRank}</if>
+		</set>
+		where float_new_id = #{floatNewId}
+	</update>
+	
+	<update id="unStick">
+	   update cahg_float_news set float_news_stick = NULL where float_news_stick = 0
+	</update>
+	
+	<update id="stick" parameterType="java.lang.Integer">
+		update cahg_float_news set float_news_stick = 0 where  float_new_id = #{floatNewId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_float_news where float_new_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_float_news where float_new_id in 
+		<foreach item="floatNewId" collection="array" open="(" separator="," close=")">
+			#{floatNewId}
+		</foreach>
+	</delete>
+
+</mapper>
