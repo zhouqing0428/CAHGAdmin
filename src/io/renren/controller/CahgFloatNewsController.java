@@ -168,7 +168,7 @@ public class CahgFloatNewsController {
 			String type = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));// 取文件格式后缀名
 			fileName = fileName + type;// 文件名
 			//String path = request.getSession().getServletContext().getRealPath("/upFloat/floatNews/" + fileName);// 存放位置
-			String path="E:/file/upFloat/floatNews/"+fileName;
+			String path="D:/file/upFloat/floatNews/"+fileName;
 			File destFile = new File(path);
 			try {
 				// FileUtils.copyInputStreamToFile()这个方法里对IO进行了自动操作，不需要额外的再去关闭IO流
