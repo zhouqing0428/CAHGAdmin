@@ -60,4 +60,6 @@ public interface CahgJobService {
 	void finish(CahgJobEntity cahgJob);
 
 	void updateFileNull(Integer[] jobIds);
+	
+	List<CahgJobEntity> queryAllList(Map<String, Object> map);
 }

@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,24 +16,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.stereotype.Controller;
 
 import io.renren.entity.CahgJobEntity;
 import io.renren.entity.JobDetailEntity;
 import io.renren.entity.JobFlow;
+import io.renren.entity.SysDeptEntity;
 import io.renren.entity.SysUserEntity;
 import io.renren.service.CahgJobService;
+import io.renren.service.SysDeptService;
 import io.renren.utils.PageUtils;
 import io.renren.utils.R;
 import io.renren.utils.ShiroUtils;
-
 
 /**
  * 
@@ -45,6 +48,9 @@ import io.renren.utils.ShiroUtils;
 public class CahgJobController {
 	@Autowired
 	private CahgJobService cahgJobService;
+	
+	@Autowired
+	private SysDeptService sysDeptService;
 	
 	@RequestMapping("/cahgjob.html")
 	public String list(){
@@ -65,12 +71,80 @@ public class CahgJobController {
 		map.put("userId", ShiroUtils.getUserId());
 		
 		//查询列表数据
-		List<CahgJobEntity> cahgJobList = cahgJobService.queryList(map);
+		List<CahgJobEntity> cahgJobList = cahgJobService.queryAllList(map);
+		//批量取出科室并缓存
+		Map<String, SysDeptEntity> deptMap = mapDept(cahgJobList);
+		//重新封装科室名称
+		setDeptList(cahgJobList,deptMap);
+
 		int total = cahgJobService.queryTotal(map);
-		//int total = cahgJobService.queryPersonTotal(map);
 		
 		PageUtils pageUtil = new PageUtils(cahgJobList, total, limit, page);
+		
 		return R.ok().put("page", pageUtil);
+	}
+	
+	/**
+	 * 批量取出科室并缓存
+	 * @param cahgJobList
+	 * @return
+	 */
+	private Map<String, SysDeptEntity> mapDept(List<CahgJobEntity> cahgJobList) {
+		// 封装经办科室ID集合
+		String[] deptIds = null;
+		Set<Integer> deptIdSet = new HashSet<>();
+		for (CahgJobEntity job : cahgJobList) {
+			if (StringUtils.isEmpty(job.getDeptId())) {
+				continue;
+			}
+			deptIds = job.getDeptId().split(";");
+			for (String deptId : deptIds) {
+				deptIdSet.add(new Integer(deptId));
+			}
+		}
+		if (deptIdSet.size() > 0) {
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("deptIds", deptIdSet);
+			//批量取出科室集合
+			List<SysDeptEntity> deptList = sysDeptService.queryDeptList(paramMap);
+			//根据科室ID缓存科室信息
+			Map<String, SysDeptEntity> deptMap = new HashMap<>();
+			for (SysDeptEntity dept : deptList) {
+				deptMap.put(dept.getDeptId().toString(), dept);
+			}
+
+			return deptMap;
+		}
+
+		return null;
+	}
+	
+	/**
+	 * 重新封装科室名称
+	 * @param cahgJobList
+	 * @param deptMap
+	 */
+	private void setDeptList(List<CahgJobEntity> cahgJobList,Map<String, SysDeptEntity> deptMap){
+		if(cahgJobList == null || cahgJobList.size() == 0){
+			return;
+		}
+		String[] deptIds = null;
+		String deptName = "";
+		SysDeptEntity deptInfo = null;
+		for (CahgJobEntity job : cahgJobList) {
+			if (StringUtils.isEmpty(job.getDeptId())) {
+				continue;
+			}
+			deptIds = job.getDeptId().split(";");
+			deptName = "";
+			for (String deptId : deptIds) {
+				if (deptMap != null && deptMap.containsKey(deptId)) {
+					deptInfo = deptMap.get(deptId);
+					deptName += deptInfo.getName() + "\n";
+				}
+			}
+			job.setDeptName(deptName);
+		}
 	}
 	
 	@ResponseBody
@@ -88,7 +162,6 @@ public class CahgJobController {
 	 */
 	@ResponseBody
 	@RequestMapping("/info/{jobId}")
-//	@RequiresPermissions("cahgjob:info")
 	public R info(@PathVariable("jobId") Integer jobId){
 		CahgJobEntity cahgJob = cahgJobService.queryObject(jobId);
 		
@@ -102,20 +175,6 @@ public class CahgJobController {
 	@RequestMapping("/save")
 	@RequiresPermissions("cahgjob:save")
 	public R save(@RequestBody CahgJobEntity cahgJob){
-		/*cahgJob.setCreateUserId(ShiroUtils.getUserId());
-		cahgJob.setStatus(0);
-		cahgJobService.saveAndGetKey(cahgJob);  //保全到工作表里面
-		//System.out.println("cahgJob.getJobId()="+cahgJob.getJobId());
-		JobFlow jobFlow=new JobFlow();
-		jobFlow.setJobId(cahgJob.getJobId());
-		jobFlow.setUserId(cahgJob.getFlowUserId()); //流转人id
-		jobFlow.setStatus(0);
-		jobFlow.setFirstFlow(1);//标记为第一流转人
-		cahgJobService.saveJobFlow(jobFlow);  //工作流转信息保全到工作流转表（流转人记录信息）
-		jobFlow.setUserId(ShiroUtils.getUserId()); //  发起人
-		jobFlow.setStatus(1);  //待办状态
-		jobFlow.setFirstFlow(0);
-		cahgJobService.saveJobFlow(jobFlow);  //工作流转信息保全到工作流转表（个人发起记录信息）*/
 		cahgJob.setCreateUserId(ShiroUtils.getUserId());
 		cahgJobService.save(cahgJob);
 		return R.ok();
@@ -129,19 +188,14 @@ public class CahgJobController {
 	 */
 	@RequestMapping("/jobDetail")
 	public String jobDetail(String jobId,HttpServletRequest request){
-		//System.out.println("jobId="+jobId);
 		int cahgJobId=Integer.parseInt(jobId);
 		CahgJobEntity cahgJob = cahgJobService.queryObject(cahgJobId);
-		/*String content=cahgJob.getContent();
-		if(content!=null&&!content.isEmpty()){
-			cahgJob.setContent(content.replace("<br>", "\r\n"));
-		}*/
-		SysUserEntity user=cahgJobService.queryFirstFlowUser(cahgJobId); //查询工作第一次流转人
+		SysUserEntity user = cahgJobService.queryFirstFlowUser(cahgJobId); // 查询工作第一次流转人
 		Map<String, Object> map = new HashMap<>();
-		map.put("jobId", jobId); 
-		map.put("userId", ShiroUtils.getUserId());  
-		List<JobDetailEntity> list = cahgJobService.quryJobDetailList(map); 
-		Map mp=cahgJobService.queryUserJobStatus(map);
+		map.put("jobId", jobId);
+		map.put("userId", ShiroUtils.getUserId());
+		List<JobDetailEntity> list = cahgJobService.quryJobDetailList(map);
+		Map mp = cahgJobService.queryUserJobStatus(map);
 		request.setAttribute("mp", mp);
 		request.setAttribute("job", cahgJob);
 		request.setAttribute("user", user);
@@ -156,7 +210,6 @@ public class CahgJobController {
 	@RequestMapping("/saveJobDetail")
 	public R saveJobDetail(@RequestBody JobDetailEntity jobDetail){
 		jobDetail.setCreateUserId(ShiroUtils.getUserId());
-		//cahgJob.setStatus(0);
 		cahgJobService.saveJobDetail(jobDetail);  // 添加一条跟进消息
 		JobFlow jobFlow=new JobFlow();
 		jobFlow.setUserId((long) jobDetail.getFlowUserId());
@@ -167,35 +220,35 @@ public class CahgJobController {
 		map.put("jobId", jobDetail.getJobId());
 		map.put("userId", jobDetail.getFlowUserId());
 		map.put("lastUpdateUserId", ShiroUtils.getUserId());
-		if(jobDetail.getStatus()==1){  //未结束流转
+		if (jobDetail.getStatus() == 1) { // 未结束流转
 			cahgJobService.updateJobStatus(map);
-			cahgJobService.updateJobFlowStatus(map); //  设置跟进人工作状态
-			cahgJobService.saveJobFlow(jobFlow);    //流转信息表添加一条流转人记录
-			map.put("status",0);  //待办状态
-			cahgJobService.updateNextJobFlowStatus(map);  // 设置表 cahg_job_flow 最后流转人 工作状态
-		}else { //结束流转
-			cahgJobService.updateJobStatus(map);  //设置工作状态已结束 以及最后处理人
-			cahgJobService.saveJobFlow(jobFlow);    //流转信息表添加一条流转人记录
-			cahgJobService.updateAllJobFlowStatu(map); //  设置跟所有跟进人工作状态已结束
-		
+			cahgJobService.updateJobFlowStatus(map); // 设置跟进人工作状态
+			cahgJobService.saveJobFlow(jobFlow); // 流转信息表添加一条流转人记录
+			map.put("status", 0); // 待办状态
+			// 设置表 cahg_job_flow最后流转人 工作状态
+			cahgJobService.updateNextJobFlowStatus(map);
+		} else { // 结束流转
+			cahgJobService.updateJobStatus(map); // 设置工作状态已结束 以及最后处理人
+			cahgJobService.saveJobFlow(jobFlow); // 流转信息表添加一条流转人记录
+			cahgJobService.updateAllJobFlowStatu(map); // 设置跟所有跟进人工作状态已结束
+
 		}
 		return R.ok();
 	}
 	
-
-
 	/**
 	 * 修改
 	 */
 	@ResponseBody
 	@RequestMapping("/update")
 	@RequiresPermissions("cahgjob:update")
-	public R update(@RequestBody CahgJobEntity cahgJob){
-		cahgJob.setLastUpdateUserId(ShiroUtils.getUserId());//最后修改人的id，
+	public R update(@RequestBody CahgJobEntity cahgJob) {
+		cahgJob.setLastUpdateUserId(ShiroUtils.getUserId());// 最后修改人的id，
 		cahgJobService.update(cahgJob);
-		
+
 		return R.ok();
 	}
+	
 	/**
 	 * 办结
 	 * @param cahgJob
@@ -222,7 +275,6 @@ public class CahgJobController {
 		return R.ok();
 	}
 
-	//
 	@ResponseBody
 	@RequestMapping("/delFile")
 	public R delFile(@RequestBody Integer[] jobIds){

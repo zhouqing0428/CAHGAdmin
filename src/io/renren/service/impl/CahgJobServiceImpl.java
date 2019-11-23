@@ -1,12 +1,11 @@
 package io.renren.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.renren.dao.CahgJobDao;
 import io.renren.entity.CahgJobEntity;
@@ -40,7 +39,7 @@ public class CahgJobServiceImpl implements CahgJobService {
 	public void save(CahgJobEntity cahgJob) {
 		cahgJob.setCreateUserId(ShiroUtils.getUserId());
 		cahgJob.setStatus(0);
-		cahgJobDao.save(cahgJob);
+		cahgJobDao.saveAndGetKey(cahgJob);
 	}
 
 	@Override
@@ -60,7 +59,6 @@ public class CahgJobServiceImpl implements CahgJobService {
 
 	@Override
 	public int saveAndGetKey(CahgJobEntity cahgJob) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.saveAndGetKey(cahgJob);
 	}
 
@@ -158,6 +156,11 @@ public class CahgJobServiceImpl implements CahgJobService {
 	@Override
 	public void updateFileNull(Integer[] jobIds) {
 		cahgJobDao.updateFileNull(jobIds);
+	}
+
+	@Override
+	public List<CahgJobEntity> queryAllList(Map<String, Object> map) {
+		return cahgJobDao.queryAllList(map);
 	}
 
 

@@ -13,30 +13,26 @@ $(function() {
 				{
 					label : '工作标题',
 					name : 'title',
-					width : 80
+					width : 140
 				},
-				// { label: '工作内容', name: 'content', width: 80
-				// },
 				{
-					label : '发起时间',
-					name : 'createUserDate',
+					label : '经办科室',
+					name : 'deptName',
 					width : 80
 				},
 				{
 					label : '计划完成时间',
 					name : 'endTime',
-					width : 80,
-				},
-				{
-					label : '办结时间',
-					name : 'finishTime',
-					width : 80,
-				},
+					width : 55,
+				},				
 				{
 					label : '状态',
 					name : 'status',
-					width : 80,
+					width : 30,
 					formatter : function(value, options, row) {
+						if (value == 0) {
+							return '<span class="label label-primary">待办</span>';
+						}
 						if (value == 1) {
 							return '<span class="label label-primary">在办</span>';
 						}
@@ -48,14 +44,25 @@ $(function() {
 						}
 					}
 				},
+				{
+					label : '办结时间',
+					name : 'finishTime',
+					width : 55,
+				},
 				// { label: '紧急程度： 0 低 1 中 2 高', name:
 				// 'urgentStatus', width: 80 },
-				/*
+				
 				{
 					label : '发起人',
 					name : 'createUser',
-					width : 80
+					width : 30
 				},
+				{
+					label : '发起时间',
+					name : 'createUserDate',
+					width : 55
+				},
+				/*
 				{
 					label : '最后处理人',
 					name : 'lastUpdateName',
@@ -80,7 +87,7 @@ $(function() {
 		rowNum : 10,
 		rowList : [ 10, 30, 50 ],
 		rownumbers : true,
-		rownumWidth : 25,
+		rownumWidth : 35,
 		autowidth : true,
 		multiselect : true,
 		pager : "#jqGridPager",
@@ -102,28 +109,13 @@ $(function() {
 			});
 		}
 	});
-
-	$("#deptId").change(function() { // 选择部门后执行
-		vm.cahgJob.deptId = "";
-		if (jQuery.isNumeric($("#deptId").val())) {
-			vm.getUserList($("#deptId").val());
-		}
-	});
-
-	$("#deptId2").change(function() { // 选择部门后执行
-		vm.user.deptId = "";
-		if (jQuery.isNumeric($("#deptId2").val())) {
-			vm.getUserList2($("#deptId2").val());
-		}
-	});
 });
 
 var vm = new Vue({
 	el : '#rrapp',
 	data : {
 		showList : true,
-		//add : false,
-		//copy : false,
+		add : true,
 		title : null,
 		deptList : [],
 		cahgJob : {},
@@ -133,16 +125,13 @@ var vm = new Vue({
 	methods : {
 		getUserList : function(deptId) {
 			vm.cahgJob.deptId = deptId
-			// alert(vm.cahgJob.deptId);
 			$.ajax({
 				type : "POST",
 				url : "../sys/user/selectList",
 				data : JSON.stringify(vm.cahgJob),
-				// dataType: "json",
 				success : function(data) {
 					var size = data.length;
 					$("#flowUserId").empty();// 设置之前加载数据为空
-					// $("#userId").append("<option>"+"--请选择流转人--"+"<option>");
 					for (var i = 0; i < size; i++) {
 						var user = data[i];
 						var $option = $("<option value=" + user.userId + ">"
@@ -158,12 +147,10 @@ var vm = new Vue({
 				type : "POST",
 				url : "../sys/user/selectList",
 				data : JSON.stringify(vm.user),
-				// dataType: "json",
 				success : function(data) {
 					var size = data.length;
 					console.log(size);
 					$("#toUserId").empty();// 设置之前加载数据为空
-					// $("#userId").append("<option>"+"--请选择流转人--"+"<option>");
 					for (var i = 0; i < size; i++) {
 						var user = data[i];
 						var $option = $("<option value=" + user.userId + ">"
@@ -178,16 +165,15 @@ var vm = new Vue({
 		},
 		toadd : function() {
 			vm.showList = false;
-			//vm.copy = false;
 			vm.add = true;
 			vm.title = "新增";
 			vm.cahgJob = {
 				urgentStatus : 0
 			};
-			//$("#content").val("");
+			$("#content").val("");
+			vm.resetDeptList();
 			// 获取部门信息
-			//this.getDeptList();
-
+//			this.getDeptList();
 		},
 		update : function(event) {
 			var jobId = getSelectedRow();
@@ -198,16 +184,16 @@ var vm = new Vue({
 			
 			vm.title = "修改";
 
-			vm.getInfo(jobId)
+			vm.getInfo(jobId);
+			
+			// 获取部门信息
+//			this.getDeptList();
 		},
 		finish: function(event) {
 			var jobId = getSelectedRow();
 			if (jobId == null) {
 				return;
 			}
-			//vm.cahgJob=null;
-			//vm.getInfo(jobId);
-			//alert(vm.cahgJob.status);
 			$.get("../cahgjob/info/" + jobId, function(r) {
 				vm.cahgJob = r.cahgJob;
 				if(vm.cahgJob.endTime==null){
@@ -242,11 +228,21 @@ var vm = new Vue({
 	
 		},
 		saveOrUpdate : function(event) {
-			/*var flowUserId = $("#flowUserId").val();
-			if (flowUserId == null || flowUserId == "") {
-				alert("请选择流转人");
+			var title = $("#title").val();
+			if (title == null || title == "") {
+				alert("请填写工作标题");
 				return;
-			}*/
+			}
+			var deptId = $("#deptId").val();
+			if (deptId == null || deptId == "") {
+				alert("请选择经办科室");
+				return;
+			}
+			var deptIds = "";
+			for ( var i in deptId) {
+				deptIds += deptId[i] + ";";
+			}
+			vm.cahgJob.deptId = deptIds;
 			var endTime = $("#endTime").val();
 			if(endTime==null||endTime==''){
 				alert("请填写计划完成时间");
@@ -350,6 +346,33 @@ var vm = new Vue({
 			$.get("../cahgjob/info/" + jobId, function(r) {
 				UE.getEditor('editor').setContent(r.cahgJob.content);  //回显编辑内容 
 				vm.cahgJob = r.cahgJob;
+				//仅待办状态下可修改
+				if(vm.cahgJob.status == 0){
+					vm.add = true;
+				} else {
+					vm.add = false;
+				}
+				
+				vm.resetDeptList();
+				
+				//选择经办科室
+				if(r.cahgJob.deptId != null){
+					var deptId = r.cahgJob.deptId.split(";");
+					var deptName = "";
+					$(".fs-option").each(function(){
+						for ( var i in deptId) {
+							if ($(this).attr("data-value") == deptId[i]) {
+								$(this).addClass("selected");
+								deptName += $(this).children(".fs-option-label").text() + ", ";
+							}
+						}
+					});
+					if(deptName.length > 0 ){
+						deptName = deptName.substring(0, deptName.length - 2);
+					}
+					$(".fs-label").attr("title",deptName);
+					$(".fs-label").html(deptName);
+				}
 			});
 		},
 		// 部门列表
@@ -360,8 +383,7 @@ var vm = new Vue({
 		},
 		reload : function(event) {
 			vm.showList = true;
-			vm.add = false;
-			vm.copy = false;
+			vm.add = true;
 			var page = $("#jqGrid").jqGrid('getGridParam', 'page');
 			$("#jqGrid").jqGrid('setGridParam', {
 				postData : {
@@ -369,6 +391,17 @@ var vm = new Vue({
 				},
 				page : page
 			}).trigger("reloadGrid");
+		},
+		resetDeptList : function() {
+			//经办科室默认全部不选中
+			$(".fs-option").each(function(){
+				for ( var i in deptId) {
+					$(this).removeClass("selected");
+				}
+			});
+			var deptName = " ===请选择=== ";
+			$(".fs-label").attr("title",deptName);
+			$(".fs-label").html(deptName);
 		}
 	}
 });

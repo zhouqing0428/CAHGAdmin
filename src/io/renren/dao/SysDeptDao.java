@@ -1,6 +1,7 @@
 package io.renren.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import io.renren.entity.SysDeptEntity;
 
@@ -13,7 +14,7 @@ import io.renren.entity.SysDeptEntity;
  */
 public interface SysDeptDao extends BaseDao<SysDeptEntity> {
 
-	List<SysDeptEntity> queryDeptList();
+	List<SysDeptEntity> queryDeptList(Map<String, Object> map);
 
 	SysDeptEntity queryObjectByName(String name);
 

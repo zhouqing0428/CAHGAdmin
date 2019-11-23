@@ -9,49 +9,52 @@
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.CahgJobEntity">
-	<!-- 	select a.*,c.status as user_job_status,(select bb.name from sys_user bb where a.create_user_id=bb.user_id) as createUser,
-		   (select cc.name from sys_user cc where a.last_update_user_id=cc.user_id) as lastUpdateName
-		   from cahg_job a join (select b.job_id,b.status from cahg_job_flow b where b.user_id=#{userId} group by b.job_id) as c 
-				where a.job_id=c.job_id
-				and a.job_id in (select d.job_id from cahg_job_flow d where d.user_id=#{userId})
-				order by c.status,a.create_user_date desc  -->
-		SELECT a.*, c.status AS user_job_status, (
-				SELECT bb.name
-				FROM sys_user bb
-				WHERE a.create_user_id = bb.user_id
-				) AS createUser, (
-				SELECT cc.name
-				FROM sys_user cc
-				WHERE a.last_update_user_id = cc.user_id
-				) AS lastUpdateName
-		FROM cahg_job a
-			JOIN (SELECT b.job_id, b.status
-				FROM cahg_job_flow b
-				WHERE b.user_id = #{userId}
-				GROUP BY b.job_id
-				) c
-		WHERE a.job_id = c.job_id
-			AND a.job_id IN (SELECT d.job_id
-				FROM cahg_job_flow d
-				WHERE d.user_id = #{userId})
+		SELECT a.*, b.status AS user_job_status,u.name AS createUser, updateUser.name AS lastUpdateName 
+		FROM cahg_job a 
+		INNER JOIN sys_user u on a.create_user_id = u.user_id
+		LEFT JOIN sys_user updateUser on a.create_user_id = updateUser.user_id
+		INNER JOIN cahg_job_flow b on a.job_id = b.job_id 
+		WHERE b.user_id = #{userId} 
+		GROUP BY b.job_id
 		<if test="userJobStatus != null and userJobStatus.trim() != ''">
-		 	 and c.`status`= #{userJobStatus}
+		 	 and b.`status`= #{userJobStatus}
 		</if>
-		ORDER BY c.status, a.create_user_date DESC
+		ORDER BY b.status, a.create_user_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<!-- 查询所有督办任务 -->
+	<select id="queryAllList" resultType="io.renren.entity.CahgJobEntity">
+		SELECT job.*,u.name AS createUser, updateUser.name AS lastUpdateName
+		FROM cahg_job job
+		INNER JOIN sys_user u on job.create_user_id = u.user_id
+		LEFT JOIN sys_user updateUser on job.last_update_user_id = updateUser.user_id
+		WHERE 1 = 1 
+		<if test="status != null and status != ''">
+			AND job.status = #{status}
+		</if>
+		ORDER BY create_user_date DESC
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
 	</select>
 	
  	<select id="queryTotal" resultType="int">
-		select count(*) from cahg_job 
+		select count(*) from cahg_job WHERE 1 = 1 
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
 	</select>
+	
 	<!-- 查询待办工作数量 -->
 	<select id="queryjobCount" resultType="int">
 		select count(*) from cahg_job a 
 		join (select b.job_id from cahg_job_flow b where b.user_id=#{userId} and b.`status`=#{status} group by b.job_id) as c
 		 where a.job_id=c.job_id
 	</select>
+	
 	<!-- 查询总工作数量 -->
 	<select id="queryPersonTotal" resultType="int">
 		select count(*) from cahg_job a 
@@ -88,7 +91,8 @@
 			`create_user_date`, 
 			`file_name`, 
 			`file_old_name`, 
-			`end_time`
+			`end_time`,
+			`dept_id`
 		)
 		values
 		(
@@ -101,7 +105,8 @@
 			sysdate(), 
 			#{fileName}, 
 			#{fileOldName}, 
-			#{endTime}
+			#{endTime},
+			#{deptId}
 		)
 		 <selectKey keyProperty="jobId" resultType="java.lang.Integer" >
             SELECT @@IDENTITY AS jobId
@@ -144,7 +149,8 @@
 			<if test="lastUpdateUserDate != null">`last_update_user_date` = #{lastUpdateUserDate}, </if>
 			<if test="fileName != null">`file_name` = #{fileName}, </if>
 			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
-			<if test="endTime != null">`end_time` = #{endTime}</if>
+			<if test="endTime != null">`end_time` = #{endTime},</if>
+			<if test="deptId !=null">`dept_id` = #{deptId}</if>
 		</set>
 		where job_id = #{jobId}
 	</update>

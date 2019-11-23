@@ -183,7 +183,9 @@ public class SysDeptController {
 	@RequestMapping("/selectList")
 	public R selectList(){
 		//查询列表数据
-		List<SysDeptEntity> list = sysDeptService.queryDeptList();
+		Map<String, Object> map = new HashMap<>();
+		map.put("condition", " dept_id != 38 ");
+		List<SysDeptEntity> list = sysDeptService.queryDeptList(map);
 		
 		return R.ok().put("list", list);
 	}
@@ -196,7 +198,7 @@ public class SysDeptController {
 //	@RequiresPermissions("sysdept:select")
 	public R select(){
 		//查询列表数据
-		List<SysDeptEntity> deptList = sysDeptService.queryDeptList();
+		List<SysDeptEntity> deptList = sysDeptService.queryDeptList(null);
 		//添加顶级部门
 		SysDeptEntity root = new SysDeptEntity();
 		root.setDeptId(0);
