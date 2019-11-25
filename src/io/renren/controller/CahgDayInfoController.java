@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,15 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.stereotype.Controller;
 
 import io.renren.entity.CahgDayInfoEntity;
-import io.renren.entity.SysDeptEntity;
 import io.renren.service.CahgDayInfoService;
 import io.renren.utils.PageUtils;
 import io.renren.utils.R;
 import io.renren.utils.ShiroUtils;
-
 
 /**
  * 
@@ -56,13 +55,16 @@ public class CahgDayInfoController {
 	@ResponseBody
 	@RequestMapping("/list")
 	@RequiresPermissions("cahgdayinfo:list")
-	public R list(String dayTitle,String author,Integer page, Integer limit){
+	public R list(String dayTitle, String author, String stick, Integer page, Integer limit) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("offset", (page - 1) * limit);
 		map.put("limit", limit);
 		map.put("dayTitle", dayTitle);
 		map.put("author", author);
 		map.put("dept_id", ShiroUtils.getDeptId());
+		if (!StringUtils.isEmpty(stick)) {
+			map.put("dayStick", stick);
+		}
 		
 		//查询列表数据
 		List<CahgDayInfoEntity> cahgDayInfoList = cahgDayInfoService.queryList(map);
@@ -72,7 +74,6 @@ public class CahgDayInfoController {
 		
 		return R.ok().put("page", pageUtil);
 	}
-	
 	
 	/**
 	 * 信息
@@ -86,7 +87,6 @@ public class CahgDayInfoController {
 		return R.ok().put("cahgDayInfo", cahgDayInfo);
 	}
 	
-	
 	/**
 	 * 保存
 	 */
@@ -95,7 +95,6 @@ public class CahgDayInfoController {
 	@RequiresPermissions("cahgdayinfo:save")
 	public R save(@RequestBody CahgDayInfoEntity cahgDayInfo){
 		cahgDayInfo.setCreateUserId(ShiroUtils.getUserEntity().getUserId());
-		cahgDayInfo.setDeptId(ShiroUtils.getUserEntity().getDeptId());
 		cahgDayInfoService.save(cahgDayInfo);
 		
 		return R.ok();
@@ -126,8 +125,6 @@ public class CahgDayInfoController {
 		return R.ok();
 	}
 	
-	
-	//
 	@ResponseBody
 	@RequestMapping("/delFile")
 	public R delFile(@RequestBody Integer[] dayId){
@@ -201,5 +198,4 @@ public class CahgDayInfoController {
 		r.put("dayId", cahgDayInfoEntity.getDayId());
 	    return r;
 	}
-	
 }

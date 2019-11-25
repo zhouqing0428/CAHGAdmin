@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,23 +57,26 @@ public class CahgImgNewsController {
 	@ResponseBody
 	@RequestMapping("/list")
 	@RequiresPermissions("cahgimgnews:list")
-	public R list(String imgNewTitle, String author, Integer page, Integer limit) {
+	public R list(String title, String author, String stick, Integer page, Integer limit) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("offset", (page - 1) * limit);
 		map.put("limit", limit);
-		map.put("imgNewTitle", imgNewTitle);
+		map.put("imgNewTitle", title);
 		map.put("author", author);
 		map.put("dept_id", ShiroUtils.getDeptId());
+		if (!StringUtils.isEmpty(stick)) {
+			map.put("imgNewsStick", stick);
+		}
 		
-		//查询列表数据
+		// 查询列表数据
 		List<CahgImgNewsEntity> cahgImgNewsList = cahgImgNewsService.queryList(map);
 		int total = cahgImgNewsService.queryTotal(map);
-		
+
 		PageUtils pageUtil = new PageUtils(cahgImgNewsList, total, limit, page);
-		
+
 		return R.ok().put("page", pageUtil);
 	}
-	
+
 	/**
 	 * 信息
 	 */

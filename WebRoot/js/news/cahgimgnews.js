@@ -18,8 +18,16 @@ $(function () {
 					return '<span class="label label-danger">隐藏</span>';  
 				}
 			}  },
-			{ label: '标题图片', name: 'imgUrl', width: 100,formatter:function(value, options, row){
-				return '<img class="img-responsive" src="/file/upImg/imgNews/'+value+'">';} }
+			{ label: '总关采用', name: 'imgNewsStick', width: 25, formatter:function(value, options, row){
+				if(value == '1'){
+					return '是';  
+				} if(value =='0'){
+					return '否'; 
+				}
+			} },
+			{ label: '标题图片', name: 'imgUrl', width: 75,formatter:function(value, options, row){
+				return '<img class="img-responsive" src="/file/upImg/imgNews/'+value+'">';
+			} }
         ],
 		viewrecords: true,
         height: 530,
@@ -55,7 +63,8 @@ var vm = new Vue({
 		tips : false,
 		q : {
 			title : null,
-			author : null
+			author : null,
+			stick: null
 		},
 		title: null,
 		deptList:[],
@@ -81,7 +90,6 @@ var vm = new Vue({
 			if(imgNewId == null){
 				return ;
 			}
-			$("#selectedDept").attr("selected","selected");
 			vm.showList = false;
             vm.title = "修改";
             vm.tips=false;
@@ -91,8 +99,7 @@ var vm = new Vue({
             vm.getInfo(imgNewId)
 		},
 		saveOrUpdate: function (event) {
-			$("#selectedDept").removeAttr("selected");
-			var title=$("#title").val();
+			var title=$("#imgNewTitle").val();
 			if(title == null || title == ""){
 		    	alert("请填写图片新闻标题");
 		    	return;
@@ -117,10 +124,15 @@ var vm = new Vue({
 		    	alert("请选择发布时间");
 		    	return;
 		    }		    
-		    vm.cahgImgNews.imgNewContent=content;
-		    vm.cahgImgNews.deptId=$("#deptId").val();
-		    vm.cahgImgNews.imgUrl=$("#imgUrlName").val();
-//		    vm.cahgImgNews.imgNewsRank=$("#imgNewsRank").val();
+		    vm.cahgImgNews.imgNewContent = content;
+		    vm.cahgImgNews.deptId = deptId;
+		    vm.cahgImgNews.imgUrl = $("#imgUrlName").val();
+		    //总关采用
+		    if ($("#imgNewsStick").is(':checked')) {
+				vm.cahgImgNews.imgNewsStick = 1;
+			} else {
+				vm.cahgImgNews.imgNewsStick = 0;
+			}
 		    vm.cahgImgNews.createDate=$("#createDate").val();//时间
 			var url = vm.cahgImgNews.imgNewId == null ? "../cahgimgnews/save" : "../cahgimgnews/update";
 			$.ajax({
@@ -232,13 +244,13 @@ var vm = new Vue({
 			});
 		},
 		reload: function (event) {
-			$("#selectedDept").removeAttr("selected");
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 
 				postData : {
-					'imgNewTitle' : vm.q.title,
-					'author' : vm.q.author
+					'title' : vm.q.title,
+					'author' : vm.q.author,
+					'stick' : vm.q.stick
 				},
                 page:page
             }).trigger("reloadGrid");

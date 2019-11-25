@@ -17,7 +17,10 @@
 		<if test="author != null and author.trim() != ''">
 			and `author` like concat('%',#{author},'%')
 		</if>
-		ORDER BY  day_rank='',day_rank ASC ,create_date DESC  
+		<if test="dayStick != null">
+			and `day_stick`  = #{dayStick}
+		</if>
+		ORDER BY day_stick DESC, create_date DESC  
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
@@ -30,6 +33,9 @@
 		</if>
 		<if test="author != null and author.trim() != ''">
 			and `author` like concat('%',#{author},'%')
+		</if>
+		<if test="dayStick != null">
+			and `day_stick`  = #{dayStick}
 		</if>
 	</select>
 	 
