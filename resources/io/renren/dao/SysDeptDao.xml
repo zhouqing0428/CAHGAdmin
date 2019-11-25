@@ -22,7 +22,16 @@
 	</select>
 	
 	<select id="queryDeptList" resultType="io.renren.entity.SysDeptEntity">
-		select * from sys_dept
+		select * from sys_dept where 1 = 1 
+		<if test="condition!=null and condition != ''">
+			and ${condition}
+		</if>
+		<if test="deptIds!=null and deptIds.size()>0">
+			and dept_id in
+		    <foreach collection="deptIds" open="(" close=")" separator="," index="index" item="item">
+		      #{item, jdbcType=INTEGER}
+		    </foreach>
+		</if>
 	</select>
 
 	<select id="queryTotal" resultType="int">

@@ -53,8 +53,8 @@ public class SysDeptServiceImpl implements SysDeptService {
 	}
 
 	@Override
-	public List<SysDeptEntity> queryDeptList() {
-		return sysDeptDao.queryDeptList();
+	public List<SysDeptEntity> queryDeptList(Map<String, Object> map) {
+		return sysDeptDao.queryDeptList(map);
 	}
 
 	@Override

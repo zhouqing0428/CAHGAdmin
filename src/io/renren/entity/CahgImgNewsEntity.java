@@ -51,7 +51,7 @@ public class CahgImgNewsEntity implements Serializable {
 	private Integer deptId;
 	//状态：0:显示 1:禁用
 	private Integer imgNewStatus;
-	//置顶状态0:表示置顶
+	//总关采用：0:否 1：是
 	private Integer imgNewsStick;
 	//排序
 	private String imgNewsRank;

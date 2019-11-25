@@ -5,42 +5,36 @@ $(function () {
         colModel: [			
 			{ label: 'imgNewId', name: 'imgNewId', width: 50, key: true,hidden:true },
 			{ label: '新闻标题', name: 'imgNewTitle', width: 120 }, 			
-			/*{ label: '图标新闻内容', name: 'imgNewContent', width: 80 }, */			
-			/*{ label: '创建人', name: 'createUserId', width: 80 }, 			
-			{ label: '最后修改人', name: 'lastUpdateUserId', width: 80 },*/ 			
-			{ label: '作者', name: 'author', width: 50 }, 			
-			/*{ label: '科室ID', name: 'deptId', width: 80 }, 	*/	
-			/*{ label: '发布时间', name: 'createDate', width: 60 }, */
-			{ label: '发布时间', name: 'createDate', width: 80,formatter:'date',
+			{ label: '作者', name: 'author', width: 80 }, 			
+			{ label: '发布时间', name: 'createDate', width: 30,formatter:'date',
 				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },
-			{ label: '发布科室', name: 'deptName', width: 50 },
+			{ label: '发布科室', name: 'deptName', width: 80 },
 			{ label: '最后修改时间', name: 'lastUpdateDate', width: 80,hidden:true }, 
-			{ label: '状态', name: 'imgNewStatus', width: 40,formatter:function(value, options, row){
+			{ label: '状态', name: 'imgNewStatus', width: 25,formatter:function(value, options, row){
 				if(value == '0'){
 					return '<span class="label label-primary">显示</span>';  
 				}
 				if(value =='1'){
 					return '<span class="label label-danger">隐藏</span>';  
 				}
-			}  }, 			
-		/*	{ label: '置顶状态0:表示置顶', name: 'imgNewsStick', width: 80 }, */			
-			{ label: '排序号', name: 'imgNewsRank', width: 40,formatter:function(value, options, row){
-				if(value != null && value != ''&&value!='default'){
-					return value;  
-				}
-				else{
-					return "";
-				}
 			}  },
-			{ label: '标题图片', name: 'imgUrl', width: 80,formatter:function(value, options, row){
-				return '<img class="img-responsive" src="/file/upImg/imgNews/'+value+'">';} }
+			{ label: '总关采用', name: 'imgNewsStick', width: 25, formatter:function(value, options, row){
+				if(value == '1'){
+					return '是';  
+				} if(value =='0'){
+					return '否'; 
+				}
+			} },
+			{ label: '标题图片', name: 'imgUrl', width: 75,formatter:function(value, options, row){
+				return '<img class="img-responsive" src="/file/upImg/imgNews/'+value+'">';
+			} }
         ],
 		viewrecords: true,
         height: 530,
         rowNum: 10,
 		rowList : [10,30,50],
         rownumbers: true, 
-        rownumWidth: 25, 
+        rownumWidth: 30, 
         autowidth:true,
         multiselect: true,
         pager: "#jqGridPager",
@@ -69,7 +63,8 @@ var vm = new Vue({
 		tips : false,
 		q : {
 			title : null,
-			author : null
+			author : null,
+			stick: null
 		},
 		title: null,
 		deptList:[],
@@ -95,7 +90,6 @@ var vm = new Vue({
 			if(imgNewId == null){
 				return ;
 			}
-			$("#selectedDept").attr("selected","selected");
 			vm.showList = false;
             vm.title = "修改";
             vm.tips=false;
@@ -105,13 +99,40 @@ var vm = new Vue({
             vm.getInfo(imgNewId)
 		},
 		saveOrUpdate: function (event) {
-			
-			$("#selectedDept").removeAttr("selected");
+			var title=$("#imgNewTitle").val();
+			if(title == null || title == ""){
+		    	alert("请填写图片新闻标题");
+		    	return;
+		    }
 		    var content=UE.getEditor('editor').getContent();  //新闻内容
-		    vm.cahgImgNews.imgNewContent=content;
-		    vm.cahgImgNews.deptId=$("#deptId").val();
-		    vm.cahgImgNews.imgUrl=$("#imgUrlName").val();
-		    vm.cahgImgNews.imgNewsRank=$("#imgNewsRank").val();
+		    if(content == null || content == ""){
+		    	alert("请填写图片新闻内容");
+		    	return;
+		    }
+		    var deptId = $("#deptId").val();
+		    if(deptId == null || deptId == ""){
+		    	alert("请选择科室");
+		    	return;
+		    }
+		    var author = $("#imgAuthor").val();
+		    if(author == null || author == ""){
+		    	alert("请填写作者");
+		    	return;
+		    }
+		    var createDate = $("#createDate").val();
+		    if(createDate == null || createDate == ""){
+		    	alert("请选择发布时间");
+		    	return;
+		    }		    
+		    vm.cahgImgNews.imgNewContent = content;
+		    vm.cahgImgNews.deptId = deptId;
+		    vm.cahgImgNews.imgUrl = $("#imgUrlName").val();
+		    //总关采用
+		    if ($("#imgNewsStick").is(':checked')) {
+				vm.cahgImgNews.imgNewsStick = 1;
+			} else {
+				vm.cahgImgNews.imgNewsStick = 0;
+			}
 		    vm.cahgImgNews.createDate=$("#createDate").val();//时间
 			var url = vm.cahgImgNews.imgNewId == null ? "../cahgimgnews/save" : "../cahgimgnews/update";
 			$.ajax({
@@ -139,7 +160,6 @@ var vm = new Vue({
 			if(imgNewIds == null){
 				return ;
 			}
-			
 			confirm('确定要删除选中的记录？', function(){
 				$.ajax({
 					type: "POST",
@@ -184,28 +204,27 @@ var vm = new Vue({
 				return ;
 			}
 		   $.ajaxFileUpload({
-					type: "POST",
-					secureuri: false, //一般设置为false
-					fileElementId: 'imgUrl', //文件上传的ID
-				    url: "../cahgimgnews/upImgUrl",
-				    //timeout : 50000, //超时时间设置，单位毫秒
-				    async: false,
-				    //maxFileSize:1024*1024, //大小限制1M
-			        //sizeErrorStr:"上传文件不能大于1M", 
-				    success: function(name){
-					 	if(name!="err"){
-					 		vm.tips = true;
-							var path="../upImg/imgNews/"+name;
-							$("#imgUrlName").val(name);
-				            $("#showImg").attr('src',path); 
-						}else{
-							alert("上传图片失败");
-						} 
-					},
-		   			error: function (data, status, e)//服务器响应失败处理函数
-	               {
-	                   alert('上传图片失败,服务器响应失败(可能是文件过大导致)');
-	                }
+				type: "POST",
+				secureuri: false, //一般设置为false
+				fileElementId: 'imgUrl', //文件上传的ID
+			    url: "../cahgimgnews/upImgUrl",
+			    //timeout : 50000, //超时时间设置，单位毫秒
+			    async: false,
+			    //maxFileSize:1024*1024, //大小限制1M
+		        //sizeErrorStr:"上传文件不能大于1M", 
+			    success: function(name){
+				 	if(name!="err"){
+				 		vm.tips = true;
+						var path="../upImg/imgNews/"+name;
+						$("#imgUrlName").val(name);
+			            $("#showImg").attr('src',path); 
+					}else{
+						alert("上传图片失败");
+					} 
+				},
+	   			error: function (data, status, e) {//服务器响应失败处理函数
+                   alert('上传图片失败,服务器响应失败(可能是文件过大导致)');
+                }
 			}); 
 		},
 		
@@ -220,22 +239,18 @@ var vm = new Vue({
 		},
 		//部门列表
 		getDeptList: function(){
-//			$.get("../sysdept/selectList", function(r){
-//				vm.deptList = r.list;
-//			});
 			$.get("../cahgimgnews/selectList", function(r){
 				vm.deptList = r.list;
 			});
-			
 		},
 		reload: function (event) {
-			$("#selectedDept").removeAttr("selected");
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 
 				postData : {
-					'imgNewTitle' : vm.q.title,
-					'author' : vm.q.author
+					'title' : vm.q.title,
+					'author' : vm.q.author,
+					'stick' : vm.q.stick
 				},
                 page:page
             }).trigger("reloadGrid");

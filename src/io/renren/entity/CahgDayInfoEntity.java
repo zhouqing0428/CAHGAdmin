@@ -23,7 +23,7 @@ public class CahgDayInfoEntity implements Serializable {
 	private String dayContent;
 	//状态0：显示 1：隐藏
 	private Integer dayStatus;
-	//置顶状态 0：置顶
+	//总关采用：0:否 1：是
 	private Integer dayStick;
 	//排序
 	private String dayRank;

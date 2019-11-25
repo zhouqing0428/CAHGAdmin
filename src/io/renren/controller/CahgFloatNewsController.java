@@ -94,7 +94,7 @@ public class CahgFloatNewsController {
 	@RequestMapping("/selectList")
 	public R selectList(){
 		//查询列表数据
-		List<SysDeptEntity> list = sysDeptService.queryDeptList();
+		List<SysDeptEntity> list = sysDeptService.queryDeptList(null);
 		
 		return R.ok().put("list", list);
 	}

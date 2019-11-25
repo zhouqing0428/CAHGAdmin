@@ -28,7 +28,7 @@ public interface SysDeptService {
 	
 	void deleteBatch(Integer[] deptIds);
 
-	List<SysDeptEntity> queryDeptList();
+	List<SysDeptEntity> queryDeptList(Map<String, Object> map);
 	
 	SysDeptEntity queryObjectByName(String name);
 

@@ -5,12 +5,10 @@ $(function () {
         colModel: [			
 			{ label: 'dayId', name: 'dayId', width: 50, key: true,hidden:true },
 			{ label: '每日信息标题', name: 'dayTitle', width: 120 }, 			
-		//	{ label: '每日信息内容', name: 'dayContent', width: 80 }, 			
 			{ label: '作者', name: 'author', width: 50 }, 			
-			{ label: '发布时间', name: 'createDate', width: 60 }, 			
-		//	{ label: '创建人', name: 'createUserId', width: 80 }, 
-			{ label: '发布科室', name: 'deptName', width: 50 }, 			
-			{ label: '显示状态', name: 'dayStatus', width: 40, formatter:function(value, options, row){
+			{ label: '发布时间', name: 'createDate', width: 52 }, 			
+			{ label: '发布科室', name: 'deptName', width: 80 }, 			
+			{ label: '状态', name: 'dayStatus', width: 25, formatter:function(value, options, row){
 				if(value == '0'){
 					return '<span class="label label-primary">显示</span>';  
 				}
@@ -18,15 +16,20 @@ $(function () {
 					return '<span class="label label-danger">隐藏</span>';  
 				}
 			} }	,
-			{ label: '排序号', name: 'dayRank', width: 40 }, 	
-			{ label: '置顶状态 0：置顶', name: 'dayStick', width: 50,hidden:true } 		
+			{ label: '总关采用', name: 'dayStick', width: 25, formatter:function(value, options, row){
+				if(value == '1'){
+					return '是';  
+				} else {
+					return '否'; 
+				}
+			} }
         ],
 		viewrecords: true,
         height: 385,
         rowNum: 10,
 		rowList : [10,30,50],
         rownumbers: true, 
-        rownumWidth: 25, 
+        rownumWidth: 35, 
         autowidth:true,
         multiselect: true,
         pager: "#jqGridPager",
@@ -55,7 +58,8 @@ var vm = new Vue({
 		title: null,
 		q : {
 			title : null,
-			author : null
+			author : null,
+			stick: null
 		},
 		deptList:[],
 		cahgDayInfo: {}
@@ -86,12 +90,35 @@ var vm = new Vue({
         
 		},
 		saveOrUpdate: function (event) {
-		   $("#selectedDept").removeAttr("selected");
-		   var content=UE.getEditor('editor').getContent();  //新闻内容
-		   vm.cahgDayInfo.dayContent=content;
-		   vm.cahgDayInfo.deptId=$("#deptId").val();
-		   vm.cahgDayInfo.dayRank=$("#dayRank").val();
-		   var url = vm.cahgDayInfo.dayId == null ? "../cahgdayinfo/save" : "../cahgdayinfo/update";
+		    var title=$("#dayTitle").val();
+			if(title == null || title == ""){
+		    	alert("请填写新闻标题");
+		    	return;
+		    }
+		    var content=UE.getEditor('editor').getContent();  //新闻内容
+		    if(content == null || content == ""){
+		    	alert("请填写新闻内容");
+		    	return;
+		    }
+		    var deptId = $("#deptId").val();
+		    if(deptId == null || deptId == ""){
+		    	alert("请选择科室");
+		    	return;
+		    }
+		    var author = $("#imgAuthor").val();
+		    if(author == null || author == ""){
+		    	alert("请填写作者");
+		    	return;
+		    }
+			vm.cahgDayInfo.dayContent = content;
+			vm.cahgDayInfo.deptId = deptId;
+			//总关采用
+		    if ($("#dayStick").is(':checked')) {
+				vm.cahgDayInfo.dayStick = 1;
+			} else {
+				vm.cahgDayInfo.dayStick = 0;
+			}
+			var url = vm.cahgDayInfo.dayId == null ? "../cahgdayinfo/save" : "../cahgdayinfo/update";
 			$.ajax({
 				type: "POST",
 			    url: url,
@@ -117,7 +144,6 @@ var vm = new Vue({
 			if(dayIds == null){
 				return ;
 			}
-			
 			confirm('确定要删除选中的记录？', function(){
 				$.ajax({
 					type: "POST",
@@ -159,7 +185,8 @@ var vm = new Vue({
 			$("#jqGrid").jqGrid('setGridParam',{ 
 				postData : {
 					'dayTitle' : vm.q.title,
-					'author' : vm.q.author
+					'author' : vm.q.author,
+					'stick' : vm.q.stick
 				},
                 page:page
             }).trigger("reloadGrid");

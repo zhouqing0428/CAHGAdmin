@@ -6,6 +6,7 @@ import java.util.Map;
 import io.renren.entity.CahgJobEntity;
 import io.renren.entity.JobDetailEntity;
 import io.renren.entity.JobFlow;
+import io.renren.entity.JobResult;
 import io.renren.entity.SysUserEntity;
 
 /**
@@ -46,4 +47,12 @@ public interface CahgJobDao extends BaseDao<CahgJobEntity> {
 	void finish(CahgJobEntity cahgJob);
 	
 	void updateFileNull(Integer[] jobIds);
+	
+	List<CahgJobEntity> queryAllList(Map<String, Object> map);
+	
+	// 新增工作督办完成情况记录
+	int saveJobResult(JobResult jobResult);
+
+	// 获取工作督办完成情况
+	List<JobResult> queryJobResult(Map<String, Object> map);
 }

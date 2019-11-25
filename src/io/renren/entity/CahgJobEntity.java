@@ -15,7 +15,7 @@ import java.util.Date;
 public class CahgJobEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	//
+	//ID
 	private Integer jobId;
 	//工作标题
 	private String title;
@@ -42,8 +42,10 @@ public class CahgJobEntity implements Serializable {
 	private String fileOldName;
 	//计划完成时间
 	private Date endTime;
-	//
-	private Integer deptId;
+	//经办科室
+	private String deptId;
+	//经办科室名称，仅实体属性非后台字段
+	private String deptName;
 	//流转人id
 	private Long flowUserId;
 	//对于用户的工作状态
@@ -222,11 +224,17 @@ public class CahgJobEntity implements Serializable {
 		return endTime;
 	}
 	 
-	public Integer getDeptId() {
+	public String getDeptId() {
 		return deptId;
 	}
-	public void setDeptId(Integer deptId) {
+	public void setDeptId(String deptId) {
 		this.deptId = deptId;
+	}
+	public String getDeptName() {
+		return deptName;
+	}
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
 	}
 	public Long getFlowUserId() {
 		return flowUserId;
