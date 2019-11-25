@@ -79,6 +79,26 @@
          select a.status from cahg_job_flow a where  a.job_id = #{jobId} and a.user_id=#{userId} group by a.job_id
 	 </select>
 	 
+	 <select id = "queryJobResult" resultType = "io.renren.entity.JobResult" parameterType="java.util.Map">
+	 	select r.*,d.name as deptName from cahg_job_result r
+	 	INNER JOIN sys_dept d on r.dept_id = d.dept_id
+	 	where 1 = 1 
+	 	<if test = "jobId != null and jobId != ''">
+	 		and r.job_id = #{jobId}
+	 	</if>
+	 	ORDER BY r.create_time DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	 </select>
+	 
+	 <select id="queryTotalJobResult" resultType="int">
+	 	select count(*) from cahg_job_result where 1 = 1 
+	 	<if test = "jobId != null and jobId != ''">
+	 		and job_id = #{jobId}
+	 	</if>
+	 </select>
+	 
 	<insert id="saveAndGetKey" parameterType="io.renren.entity.CahgJobEntity">
 		insert into cahg_job
 		(
@@ -134,7 +154,25 @@
 	  #{jobId},
 	  #{flowUserId}
 	  )
-	</insert>	
+	</insert>
+	
+	<insert id="saveJobResult" parameterType="io.renren.entity.JobResult">
+	  insert into cahg_job_result
+	  (
+	  job_id,
+	  user_name,
+	  dept_id,
+	  content,
+	  create_time
+	  ) 
+	  values(
+	  #{jobId},
+	  #{userName},
+	  #{deptId},
+	  #{content},
+	  sysdate()	  
+	  )
+	</insert>
 	 
 	<update id="update" parameterType="io.renren.entity.CahgJobEntity">
 		update cahg_job 
@@ -150,7 +188,8 @@
 			<if test="fileName != null">`file_name` = #{fileName}, </if>
 			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
 			<if test="endTime != null">`end_time` = #{endTime},</if>
-			<if test="deptId !=null">`dept_id` = #{deptId}</if>
+			<if test="deptId !=null">`dept_id` = #{deptId},</if>
+			<if test="finishTime !=null">`finish_time` = #{finishTime}</if>
 		</set>
 		where job_id = #{jobId}
 	</update>

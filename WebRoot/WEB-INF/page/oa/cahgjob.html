@@ -33,12 +33,15 @@
 			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
 			#end
 			#if($shiro.hasPermission("cahgjob:delete"))
-			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			<a class="btn btn-danger" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
 			#end
 			#if($shiro.hasPermission("cahgjob:finish"))
 			<a  class="btn btn-success"  @click="finish">完结</a>
 			#end
-			<a class="btn btn-danger" style="display: none" @click="tocopy">&nbsp;抄送</a>
+			<a class="btn btn-primary" @click="exportExcel">
+					&nbsp;<i class="fa fa-file-o"></i> 导出&nbsp;
+			</a>
+			<!-- <a class="btn btn-danger" style="display: none" @click="tocopy">&nbsp;抄送</a> -->
 		</div>
 	    <table id="jqGrid"></table>
 	    <div id="jqGridPager"></div>

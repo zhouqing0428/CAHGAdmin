@@ -2,6 +2,8 @@ package io.renren.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +31,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -28,6 +39,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import io.renren.entity.CahgJobEntity;
 import io.renren.entity.JobDetailEntity;
 import io.renren.entity.JobFlow;
+import io.renren.entity.JobResult;
 import io.renren.entity.SysDeptEntity;
 import io.renren.entity.SysUserEntity;
 import io.renren.service.CahgJobService;
@@ -187,7 +199,7 @@ public class CahgJobController {
 	 * @return
 	 */
 	@RequestMapping("/jobDetail")
-	public String jobDetail(String jobId,HttpServletRequest request){
+	public String jobDetail(String jobId, HttpServletRequest request) {
 		int cahgJobId=Integer.parseInt(jobId);
 		CahgJobEntity cahgJob = cahgJobService.queryObject(cahgJobId);
 		SysUserEntity user = cahgJobService.queryFirstFlowUser(cahgJobId); // 查询工作第一次流转人
@@ -201,6 +213,35 @@ public class CahgJobController {
 		request.setAttribute("user", user);
 		request.setAttribute("list", list);
 		return "oa/jobDetail.jsp";
+	}
+	
+	/**
+	 * 查看完成情况
+	 */
+	@RequestMapping("/viewResult")
+	public String viewResult(Integer jobId, HttpServletRequest request) {
+		
+		CahgJobEntity cahgJob = cahgJobService.queryObject(jobId);
+		request.setAttribute("job", cahgJob);
+		
+		return "oa/cahgjobresult.html";
+	}
+	
+	/**
+	 * 列表
+	 */
+	@ResponseBody
+	@RequestMapping("/resultList")
+	public R getResutList(Integer jobId, Integer page, Integer limit) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("jobId", jobId);
+		List<JobResult> list = cahgJobService.queryJobResult(params);
+		
+		int total = cahgJobService.queryTotalJobResult(params);
+
+		PageUtils pageUtil = new PageUtils(list, total, limit, page);
+
+		return R.ok().put("page", pageUtil);
 	}
 	
 	/**
@@ -306,5 +347,104 @@ public class CahgJobController {
 			}
 		}
 		return "err";
+	}
+	
+	/**
+	 * 导出
+	 * @throws IOException 
+	 */
+	@RequestMapping(value="/export",method={RequestMethod.GET,RequestMethod.POST})
+	public void exports(String status, HttpServletResponse response) throws IOException {
+		OutputStream outputStream = null;
+		// 第一步创建一个webbook ,对应一个Excel文件
+		// HSSFWorkbook webBook = new HSSFWorkbook(); //03版本
+		XSSFWorkbook webBook = new XSSFWorkbook(); // 07至以后版本
+		// 第二步，在webbook中添 添加一个sheet 对应的Excel 文件中的sheet
+		XSSFSheet sheet = webBook.createSheet("Sheet信息");
+		// 第三步，在sheet中添加表头 第 0 行（从 0 开始的），老版本的poi 对Excel的行数列数有限制 short
+		XSSFRow row = sheet.createRow((int) 0);
+		// 第四步，创建单元格，并设置表头居中
+		XSSFCellStyle style = webBook.createCellStyle();
+		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 创建一个居中格式
+
+		XSSFCellStyle headerStyle = webBook.createCellStyle(); // 标题样式
+		headerStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		headerStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		XSSFFont headerFont = webBook.createFont(); // 标题字体
+		headerFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		headerFont.setFontHeightInPoints((short) 11);
+		headerStyle.setFont(headerFont);
+		short width = 20, height = 25 * 20;
+		sheet.setDefaultColumnWidth(width);
+
+		XSSFCell cell = null;
+		String[] strs = { "工作标题", "经办科室", "计划完成时间", "状态", "办结时间", "发起人", "发起时间" };
+		for (int i = 0; i < strs.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(strs[i]);
+			cell.setCellStyle(headerStyle);
+		}
+
+		// 第五步 写入实体数据 实际应用中这些数据从数据库得到
+		Map<String, Object> map = new HashMap<>();
+		map.put("status", status);
+		//查询列表数据
+		List<CahgJobEntity> list = cahgJobService.queryAllList(map);
+		// 批量取出科室并缓存
+		Map<String, SysDeptEntity> deptMap = mapDept(list);
+		// 重新封装科室名称
+		setDeptList(list, deptMap);
+		CahgJobEntity job = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		for (int i = 0; i < list.size(); i++) {
+			job = list.get(i);
+			row = sheet.createRow((int) i + 1);
+			// 第四步， 创建单元格，并设置值
+			row.createCell(0).setCellValue(job.getTitle());
+			row.createCell(1).setCellValue(job.getDeptName());
+			if(job.getEndTime()!=null){
+				row.createCell(2).setCellValue(format.format(job.getEndTime()));
+			} else {
+				row.createCell(2).setCellValue("");
+			}
+			row.createCell(3).setCellValue(getStatusName(job.getStatus()));
+			if (job.getFinishTime() != null) {
+				row.createCell(4).setCellValue(format.format(job.getFinishTime()));
+			} else {
+				row.createCell(4).setCellValue("");
+			}
+			row.createCell(5).setCellValue(job.getCreateUser());
+			if (job.getCreateUserDate() != null) {
+				row.createCell(6).setCellValue(format.format(job.getCreateUserDate()));
+			} else {
+				row.createCell(6).setCellValue("");
+			}
+		}
+		try {
+			String fileName = "工作督办.xlsx";
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8"));
+			outputStream = response.getOutputStream();
+			webBook.write(outputStream);
+		} catch (Exception e) {
+			System.out.println("导出异常");
+			e.printStackTrace();
+		} finally {
+			outputStream.flush();
+			outputStream.close();
+			webBook.close();
+		}
+	}
+
+	private String getStatusName(Integer status) {
+		if (status == 0) {
+			return "待办";
+		} else if (status == 1) {
+			return "在办";
+		} else if (status == 2) {
+			return "已办";
+		} else {
+			return "超时办结";
+		}
 	}
 }

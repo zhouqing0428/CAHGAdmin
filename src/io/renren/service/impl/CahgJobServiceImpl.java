@@ -11,6 +11,7 @@ import io.renren.dao.CahgJobDao;
 import io.renren.entity.CahgJobEntity;
 import io.renren.entity.JobDetailEntity;
 import io.renren.entity.JobFlow;
+import io.renren.entity.JobResult;
 import io.renren.entity.SysUserEntity;
 import io.renren.service.CahgJobService;
 import io.renren.utils.ShiroUtils;
@@ -64,82 +65,66 @@ public class CahgJobServiceImpl implements CahgJobService {
 
 	@Override
 	public CahgJobEntity saveAndEntity(CahgJobEntity cahgJob) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.saveAndEntity(cahgJob);
 	}
 
 	@Override
 	public void saveJobFlow(JobFlow jobFlow) {
-		// TODO Auto-generated method stub
 		cahgJobDao.saveJobFlow(jobFlow);
 	}
 
 	@Override
 	public List<JobDetailEntity> quryJobDetailList(Map map) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.quryJobDetailList(map);
 	}
 
 	@Override
 	public SysUserEntity queryFirstFlowUser(int cahgJobId) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.queryFirstFlowUser(cahgJobId);
 	}
 
 	@Override
 	public Map queryUserJobStatus(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.queryUserJobStatus(map);
 	}
 
 	@Override
 	public void saveJobDetail(JobDetailEntity jobDetail) {
-		// TODO Auto-generated method stub
 		cahgJobDao.saveJobDetail(jobDetail);
 	}
 
 	@Override
 	public void updateJobFlowStatus(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		cahgJobDao.updateJobFlowStatus(map);
 	}
 
 	@Override
 	public void updateJobStatus(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		cahgJobDao.updateJobStatus(map);
 	}
 
 	@Override
 	public void updateNextJobFlowStatus(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		cahgJobDao.updateNextJobFlowStatus(map);
 	}
 
 	@Override
 	public void updateAllJobFlowStatu(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		cahgJobDao.updateAllJobFlowStatu(map);
 	}
 
 	@Override
 	public int queryjobCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.queryjobCount(map);
 	}
 
 	@Override
 	public int queryPersonTotal(Map<String, Object> map) {
-		// TODO Auto-generated method stub
 		return cahgJobDao.queryPersonTotal(map);
 	}
 
-
 	@Override
 	public void finish(CahgJobEntity cahgJob) {
-		// TODO Auto-generated method stub
-		//SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd"); 
-		  //Date bt=sdf.parse(beginTime); 
 		Date now =new Date();
 		Date endTime = cahgJob.getEndTime();
 		int result = now.compareTo(endTime);
@@ -148,7 +133,6 @@ public class CahgJobServiceImpl implements CahgJobService {
 		} else {
 			cahgJob.setStatus(2);
 		}
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		cahgJob.setFinishTime(new Date());
 		cahgJobDao.update(cahgJob);
 	}
@@ -163,24 +147,19 @@ public class CahgJobServiceImpl implements CahgJobService {
 		return cahgJobDao.queryAllList(map);
 	}
 
-
-/*
 	@Override
-	public void finish(CahgJobEntity cahgJob) {
-		// TODO Auto-generated method stub
-		//SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd"); 
-		  //Date bt=sdf.parse(beginTime); 
-		Date now =new Date();
-		Date endTime = cahgJob.getEndTime();
-		int result = now.compareTo(endTime);
-		if (result == 1) {
-			cahgJob.setStatus(2);
-		} else {
-			cahgJob.setStatus(1);
-		}
-
-		cahgJobDao.update(cahgJob);
+	public int saveJobResult(JobResult jobResult) {
+		return cahgJobDao.saveJobResult(jobResult);
 	}
-*/
 
+	@Override
+	public List<JobResult> queryJobResult(Map<String, Object> map) {
+		return cahgJobDao.queryJobResult(map);
+	}
+
+	@Override
+	public int queryTotalJobResult(Map<String, Object> map) {
+		return cahgJobDao.queryTotalJobResult(map);
+	}
+	
 }

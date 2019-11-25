@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp">
+	<div>
+		<h3 align="center">${job.title}</h3>
+		<br>
+		<input id="jobId" type="hidden" name="jobId" v-model="jobId" value="${job.jobId}"/>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    <br>
+	<div class="form-group">
+		<div class="col-sm-2 control-label"></div>
+		<input type="button" class="btn btn-warning" onclick="javascript:history.back();" value="返回"/>
+	</div>
+</div>
+<script>
+	var jobId = '${job.jobId}';
+</script>
+<script src="${rc.contextPath}/js/oa/cahgjobresult.js?_${date.systemTime}"></script>
+</body>
+</html>

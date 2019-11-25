@@ -13,7 +13,7 @@ $(function() {
 				{
 					label : '工作标题',
 					name : 'title',
-					width : 140
+					width : 120
 				},
 				{
 					label : '经办科室',
@@ -23,7 +23,7 @@ $(function() {
 				{
 					label : '计划完成时间',
 					name : 'endTime',
-					width : 55,
+					width : 52,
 				},				
 				{
 					label : '状态',
@@ -47,47 +47,33 @@ $(function() {
 				{
 					label : '办结时间',
 					name : 'finishTime',
-					width : 55,
+					width : 52,
 				},
-				// { label: '紧急程度： 0 低 1 中 2 高', name:
-				// 'urgentStatus', width: 80 },
-				
 				{
 					label : '发起人',
 					name : 'createUser',
-					width : 30
+					width : 25
 				},
 				{
 					label : '发起时间',
 					name : 'createUserDate',
-					width : 55
+					width : 52
 				},
-				/*
 				{
-					label : '最后处理人',
-					name : 'lastUpdateName',
-					width : 80
-				},
-				/*{
-					label : '最后处理时间',
-					name : 'lastUpdateUserDate',
-					width : 80
-				},*/
-				/*{
-					label : '跟进',
-					name : 'jobId',
-					width : 50,
+					label : '操作',
+					name : 'operator',
+					width : 38,
 					formatter : function(value, options, row) {
-						return '<a  class="btn btn-primary btn-xs" href="../cahgjob/jobDetail?jobId='
-								+ value + '">查看</a>';
+						return '<a  class="btn btn-primary btn-xs" href="../cahgjob/viewResult?jobId='
+								+ row.jobId + '">查看完成情况</a>';
 					}
-				}*/ ],
+				}],
 		viewrecords : true,
 		height : 385,
 		rowNum : 10,
 		rowList : [ 10, 30, 50 ],
 		rownumbers : true,
-		rownumWidth : 35,
+		rownumWidth : 30,
 		autowidth : true,
 		multiselect : true,
 		pager : "#jqGridPager",
@@ -226,6 +212,9 @@ var vm = new Vue({
 				});
 			});
 	
+		},
+		exportExcel: function(event){
+			window.location.href="../cahgjob/export?status="+$("#status").val();
 		},
 		saveOrUpdate : function(event) {
 			var title = $("#title").val();

@@ -37,4 +37,7 @@ public interface BaseDao<T> {
 	int queryTotal(Map<String, Object> map);
 
 	int queryTotal();
+	
+	// 获取工作督办完成情况总记录数
+	int queryTotalJobResult(Map<String, Object> map);
 }
