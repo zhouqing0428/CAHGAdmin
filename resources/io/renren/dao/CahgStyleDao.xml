@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgStyleDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgStyleEntity">
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName 
+		from cahg_style n  where n.style_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgStyleEntity">
+			select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName
+		from cahg_style n where 1 = 1
+		<if test="styleTitle != null and styleTitle.trim() != ''">
+			and `style_title` like concat('%',#{styleTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+		<if test="styleStick != null">
+			and `style_stick`  = #{styleStick}
+		</if>
+		 ORDER BY style_stick DESC,create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_style where 1=1
+		<if test="styleTitle != null and styleTitle.trim() != ''">
+			and `style_title` like concat('%',#{styleTitle},'%') 
+		</if>
+		<if test="author != null and author.trim() != ''">
+			and `author` like concat('%',#{author},'%')
+		</if>
+		<if test="styleStick != null">
+			and `style_stick`  = #{styleStick}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgStyleEntity" useGeneratedKeys="true" keyProperty="styleId">
+		insert into cahg_style
+		(
+			`style_title`, 
+			`style_category`,
+			`create_date`, 
+			`last_update_date`, 
+			`create_user_id`, 
+			`last_update_user_id`, 
+			`style_url`, 
+			`author`, 
+			`dept_id`, 
+			`style_status`, 
+			`style_stick`
+		)
+		values
+		(
+			#{styleTitle}, 
+			#{styleCategory}, 
+			sysdate(), 
+			#{lastUpdateDate}, 
+			#{createUserId}, 
+			#{lastUpdateUserId}, 
+			#{styleUrl}, 
+			#{author}, 
+			#{deptId}, 
+			#{styleStatus}, 
+			#{styleStick} 
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgStyleEntity">
+		update cahg_style 
+		<set>
+			<if test="styleTitle != null">`style_title` = #{styleTitle}, </if>
+			<if test="styleCategory != null">`style_category` = #{styleCategory}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			`last_update_date` = sysdate(),
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="styleUrl != null">`style_url` = #{styleUrl}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="styleStatus != null">`style_status` = #{styleStatus}, </if>
+			<if test="styleStick != null">`style_stick` = #{styleStick}, </if>
+			<if test="styleRank != null">`style_rank` = #{styleRank}</if>
+		</set>
+		where style_id = #{styleId}
+	</update>
+	
+	<update id="unStick">
+	   update cahg_style set style_stick = NULL where style_stick = 0
+	</update>
+	
+	<update id="stick" parameterType="java.lang.Integer">
+		update cahg_style set style_stick = 0 where  style_id = #{styleId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_style where style_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_style where style_id in 
+		<foreach item="styleId" collection="array" open="(" separator="," close=")">
+			#{styleId}
+		</foreach>
+	</delete>
+	
+	<update id="updateStatusShow">
+		update cahg_style 
+		<set>
+			`style_status` = 0
+		</set>
+		where style_id in
+		<foreach item="styleId" collection="array" open="(" separator="," close=")">
+			#{styleId}
+		</foreach>
+	</update>
+	
+	<update id="updateStatusUnShow">
+		update cahg_style 
+		<set>
+			`style_status` = 1
+		</set>
+		where style_id in
+		<foreach item="styleId" collection="array" open="(" separator="," close=")">
+			#{styleId}
+		</foreach>
+	</update>
+
+</mapper>
