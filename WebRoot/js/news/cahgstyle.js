@@ -27,7 +27,13 @@ $(function () {
 				}
 			}  }, 			
 			{ label: '风采图片', name: 'styleUrl', width: 80,formatter:function(value, options, row){
-				return '<img class="style-responsive" src="/file/upStyle/style/'+value+'" height="50" width="100">';} }
+					if(value != ''){
+						return '<img class="style-responsive" src="/file/upStyle/style/'+value+'" height="50" width="100">';
+					}else{
+						return '';
+					}
+				} 
+			}
         ],
 		viewrecords: true,
         height: 530,
@@ -89,7 +95,6 @@ var vm = new Vue({
 				return ;
 			}
 			$("#selectedDept").attr("selected","selected");
-			$("#selectedCategory").attr("selected","selected");
 			vm.showList = false;
             vm.title = "修改";
             vm.tips=false;
@@ -101,12 +106,11 @@ var vm = new Vue({
 		saveOrUpdate: function (event) {
 			
 			$("#selectedDept").removeAttr("selected");
-			$("#selectedCategory").removeAttr("selected");
 		    vm.cahgStyle.deptId=$("#deptId").val();
 		    vm.cahgStyle.styleUrl=$("#styleUrlName").val();
 		    vm.cahgStyle.styleRank=$("#styleRank").val();
 		    vm.cahgStyle.createDate=$("#createDate").val();//时间
-		    vm.cahgStyle.styleCategory=$("#styleCategory").val();//时间
+		    vm.cahgStyle.styleCategory=$("#styleCategory").val();//分类
 			var url = vm.cahgStyle.styleId == null ? "../cahgstyle/save" : "../cahgstyle/update";
 			$.ajax({
 				type: "POST",
@@ -266,7 +270,6 @@ var vm = new Vue({
 		},
 		reload: function (event) {
 			$("#selectedDept").removeAttr("selected");
-			$("#selectedCategory").removeAttr("selected");
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 

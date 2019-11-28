@@ -69,13 +69,13 @@
 			<div class="form-group" >
 			   	<div class="col-sm-2 control-label">图片分类</div>
 	                <div class="col-sm-10">
-					     <select id="styleCategory"  class="form-control">
-					         	<option v-if="cahgStyle.styleCategory == 1" selected="selected" :value="1" id="selectedCategory">
+					     <select id="styleCategory"  class="form-control" v-model="styleCategory">
+					         	<option v-if="cahgStyle.styleCategory == 1" selected="selected" :value="1" >
 		              				活动剪影
 			              		</option>
 			              		<option v-else value="1">活动剪影</option>
 			              		
-					         	<option v-if="cahgStyle.styleCategory == 2" selected="selected" :value="2"  id="selectedCategory">
+					         	<option v-if="cahgStyle.styleCategory == 2" selected="selected" :value="2" >
 		              				摄影作品
 			              		</option>
 			              		<option v-else value="2">摄影作品</option>
@@ -126,5 +126,6 @@
 </div>
 
 <script src="${rc.contextPath}/js/news/cahgstyle.js?_${date.systemTime}"></script>
+
 </body>
 </html>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.renren.dao.CahgViolationDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgViolationEntity">
+		select a.*,(select b.name from sys_user b where a.create_user_id = b.user_id) as userName from cahg_violation a
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgViolationEntity">
+		SELECT a.*,u.name AS userName FROM cahg_violation a 
+		INNER JOIN sys_user u on a.create_user_id = u.user_id
+		WHERE 1 = 1 
+		<if test="title != null and title.trim() != ''">
+		 	 and a.`title` like concat('%',#{title},'%')
+		</if>
+		ORDER BY a.create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_violation WHERE 1 = 1  
+		<if test="title != null and title.trim() != ''">
+		 	 and `title` like concat('%',#{title},'%')
+		</if>
+	</select>
+	
+	<insert id="save" parameterType="io.renren.entity.CahgViolationEntity">
+		insert into cahg_violation
+		(
+			`id`, 
+			`title`, 
+			`content`, 
+			`file_name`, 
+			`file_old_name`, 
+			`create_user_id`, 
+			`create_date`
+		)
+		values
+		(
+			#{id}, 
+			#{title}, 
+			#{content}, 
+			#{fileName}, 
+			#{fileOldName},
+			#{createUserId}, 
+			sysdate()			 
+		)
+	</insert>
+	
+	<update id="update" parameterType="io.renren.entity.CahgViolationEntity">
+		update cahg_violation 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
+			<if test="lastUpdateDate != null">`last_update_date` = #{lastUpdateDate}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updateFileNull">
+		update cahg_violation set 
+		`file_name` = null, 
+		`file_old_name` = null,
+		`last_update_date` = sysdate()
+		where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_violation where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_violation where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>
