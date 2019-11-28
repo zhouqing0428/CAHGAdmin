@@ -91,7 +91,6 @@ public class CahgSpecialTopicController {
 	@RequiresPermissions("cahgspecialtopic:save")
 	public R save(@RequestBody CahgSpecialTopicEntity cahgSpecialTopic){
 		cahgSpecialTopic.setCreateUserId(ShiroUtils.getUserId());
-		cahgSpecialTopic.setDeptId(ShiroUtils.getUserEntity().getDeptId());
 
 		cahgSpecialTopicService.save(cahgSpecialTopic);
 		

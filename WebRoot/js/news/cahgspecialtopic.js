@@ -4,14 +4,12 @@ $(function () {
         datatype: "json",
         colModel: [			
 			{ label: 'specialTopicId', name: 'specialTopicId', width: 50, key: true,hidden:true },
-			{ label: '标题', name: 'title', width: 80 }, 			
-//			{ label: '内容', name: 'content', width: 80 }, 			
-			{ label: '作者', name: 'author', width: 80 }, 			
-			{ label: '发布时间', name: 'createDate', width: 80 },
+			{ label: '标题', name: 'title', width: 140 }, 			
+			{ label: '作者', name: 'author', width: 25 }, 			
+			{ label: '发布时间', name: 'createDate', width: 55 },
 			{ label: '专题类别', name: 'categoryName', width: 80 },
-//			{ label: '附件名称', name: 'fileName', width: 80 }, 			
-			{ label: '文件名', name: 'fileOldName', width: 80 }, 
-			{ label: '状态', name: 'status', width: 80,formatter:function(value, options, row){
+			{ label: '文件名', name: 'fileOldName', width: 60 }, 
+			{ label: '状态', name: 'status', width: 25,formatter:function(value, options, row){
 				if(value == '0'){
 					return '<span class="label label-primary">显示</span>';  
 				}
@@ -26,7 +24,7 @@ $(function () {
         rowNum: 10,
 		rowList : [10,30,50],
         rownumbers: true, 
-        rownumWidth: 25, 
+        rownumWidth: 30, 
         autowidth:true,
         multiselect: true,
         pager: "#jqGridPager",
@@ -99,11 +97,29 @@ var vm = new Vue({
 			this.getCategoryList();
 		},
 		saveOrUpdate: function (event) {
+			var title = $("#topTitle").val();
+			if(title == null || title == ""){
+				alert("请填写标题");
+				return;
+			}
+			
+			var content = UE.getEditor('editor').getContent();
+			if(content == null || content == ""){
+				alert("请填写内容");
+				return;
+			}
+			
 		    var specialTopicCategoryId=$("#specialTopicCategoryId").val();
-		    if(specialTopicCategoryId==null||specialTopicCategoryId==""){
+		    if(specialTopicCategoryId==null || specialTopicCategoryId==""){
 		    	alert("请选择专题类别");
 		    	return ;
-		    };
+		    }
+		    
+		    var deptId=$("#deptId").val();
+		    if(deptId==null || deptId==""){
+		    	alert("请选择科室");
+		    	return ;
+		    }
 			var url = vm.cahgSpecialTopic.specialTopicId == null ? "../cahgspecialtopic/save" : "../cahgspecialtopic/update";
 		    var content=UE.getEditor('editor').getContent();  //新闻内容
 	
