@@ -81,6 +81,17 @@
 		where special_topic_id = #{specialTopicId}
 	</update>
 	
+	<update id="updateFileNull">
+		update cahg_special_topic set 
+		`file_name` = null, 
+		`file_old_name` = null,
+		`last_update_user_date` = sysdate() 
+		where special_topic_id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
 	<delete id="delete">
 		delete from cahg_special_topic where special_topic_id = #{value}
 	</delete>
