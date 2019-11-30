@@ -106,6 +106,10 @@ var vm = new Vue({
 		saveOrUpdate: function (event) {
 			
 			$("#selectedDept").removeAttr("selected");
+			if(!$("#styleUrlName").val()){
+				alert("请先上传图片");
+				return;
+			}
 		    vm.cahgStyle.deptId=$("#deptId").val();
 		    vm.cahgStyle.styleUrl=$("#styleUrlName").val();
 		    vm.cahgStyle.styleRank=$("#styleRank").val();
