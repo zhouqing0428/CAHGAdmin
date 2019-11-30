@@ -17,4 +17,8 @@ public interface CahgFloatNewsDao extends BaseDao<CahgFloatNewsEntity> {
 	
 	void unStick();
 	
+	void updateStatusShow(Integer[] floatNewIds);
+	
+	void updateStatusUnShow(Integer[] floatNewIds);
+	
 }

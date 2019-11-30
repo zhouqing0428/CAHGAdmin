@@ -182,5 +182,26 @@ public class CahgFloatNewsController {
 		return "err";
 	}
 	
+	/**
+	 * 显示
+	 */
+	@ResponseBody
+	@RequestMapping("/show")
+	public R show(@RequestBody Integer[] floatNewIds){
+		cahgFloatNewsService.updateStatusShow(floatNewIds);
+		
+		return R.ok();
+	}
+	/**
+	 * 不显示
+	 */
+	@ResponseBody
+	@RequestMapping("/unshow")
+	public R unshow(@RequestBody Integer[] floatNewIds){
+		cahgFloatNewsService.updateStatusUnShow(floatNewIds);
+		
+		return R.ok();
+	}
+	
 	
 }

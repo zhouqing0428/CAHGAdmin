@@ -10,9 +10,9 @@ $(function () {
 			{ label: '最后修改人', name: 'lastUpdateUserId', width: 80 },*/ 			
 			{ label: '作者', name: 'author', width: 50 }, 			
 			/*{ label: '科室ID', name: 'deptId', width: 80 }, 	*/	
-			/*{ label: '发布时间', name: 'createDate', width: 60 }, */
-			{ label: '发布时间', name: 'createDate', width: 80,formatter:'date',
-				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },
+			{ label: '发布时间', name: 'createDate', width: 60 }, 
+			/*{ label: '发布时间', name: 'createDate', width: 80,formatter:'date',
+				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },*/
 			{ label: '发布科室', name: 'deptName', width: 50 },
 			{ label: '最后修改时间', name: 'lastUpdateDate', width: 80,hidden:true }, 
 			{ label: '状态', name: 'floatNewStatus', width: 40,formatter:function(value, options, row){
@@ -106,13 +106,30 @@ var vm = new Vue({
 		},
 		saveOrUpdate: function (event) {
 			
+			var title = $("#floatNewTitle").val();
+			if(title == null || title == ""){
+				alert("请填写弹窗标题");
+				return;
+			}
+			
+			if(!$("#floatUrlName").val()){
+				alert("请先上传图片");
+				return;
+			}
+			
+			var content = UE.getEditor('editor').getContent();
+			if(content == null || content == ""){
+				alert("请填写内容");
+				return;
+			}
+			
 			$("#selectedDept").removeAttr("selected");
 		    var content=UE.getEditor('editor').getContent();  //新闻内容
 		    vm.cahgFloatNews.floatNewContent=content;
 		    vm.cahgFloatNews.deptId=$("#deptId").val();
 		    vm.cahgFloatNews.floatUrl=$("#floatUrlName").val();
 		    vm.cahgFloatNews.floatNewsRank=$("#floatNewsRank").val();
-		    vm.cahgFloatNews.createDate=$("#createDate").val();//时间
+		    //vm.cahgFloatNews.createDate=$("#createDate").val();//时间
 			var url = vm.cahgFloatNews.floatNewId == null ? "../cahgfloatnews/save" : "../cahgfloatnews/update";
 			$.ajax({
 				type: "POST",
@@ -162,6 +179,50 @@ var vm = new Vue({
 				});
 			});
 		},
+		
+		//显示
+		show:function(event){
+			var styleIds = getSelectedRows();
+			if(styleIds == null){
+				return ;
+			}
+			$.ajax({
+				type: "POST",
+			    url: "../cahgfloatnews/show",
+			    data: JSON.stringify(styleIds),
+			    success: function(r){
+					if(r.code == 0){
+						alert('操作成功', function(index){
+							$("#jqGrid").trigger("reloadGrid");
+						});
+					}else{
+						alert(r.msg);
+					}
+				}
+			});
+		},
+		//不显示
+		unshow:function(event){
+			var styleIds = getSelectedRows();
+			if(styleIds == null){
+				return ;
+			}
+			$.ajax({
+				type: "POST",
+			    url: "../cahgfloatnews/unshow",
+			    data: JSON.stringify(styleIds),
+			    success: function(r){
+					if(r.code == 0){
+						alert('操作成功', function(index){
+							$("#jqGrid").trigger("reloadGrid");
+						});
+					}else{
+						alert(r.msg);
+					}
+				}
+			});
+		},
+		
 	
       stick	:function(){
     	  var floatNewId = getSelectedRow();

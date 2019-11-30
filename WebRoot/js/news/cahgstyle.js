@@ -105,11 +105,25 @@ var vm = new Vue({
 		},
 		saveOrUpdate: function (event) {
 			
-			$("#selectedDept").removeAttr("selected");
+			var title = $("#styleTitle").val();
+			if(title == null || title == ""){
+				alert("请填写风采标题");
+				return;
+			}
+			var category = $("#styleCategory").val();
+			if(category == null || category == ""){
+				alert("请选择图片分类");
+				return;
+			}
+			
+			
 			if(!$("#styleUrlName").val()){
 				alert("请先上传图片");
 				return;
 			}
+			
+			$("#selectedDept").removeAttr("selected");
+			
 		    vm.cahgStyle.deptId=$("#deptId").val();
 		    vm.cahgStyle.styleUrl=$("#styleUrlName").val();
 		    vm.cahgStyle.styleRank=$("#styleRank").val();

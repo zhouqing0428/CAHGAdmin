@@ -66,4 +66,16 @@ public class CahgFloatNewsServiceImpl implements CahgFloatNewsService {
 		cahgFloatNewsDao.unStick();
 	}
 	
+	@Override
+	public void updateStatusShow(Integer[] floatNewIds) {
+		// TODO Auto-generated method stub
+		cahgFloatNewsDao.updateStatusShow(floatNewIds);
+	}
+	
+	@Override
+	public void updateStatusUnShow(Integer[] floatNewIds) {
+		// TODO Auto-generated method stub
+		cahgFloatNewsDao.updateStatusUnShow(floatNewIds);
+	}
+	
 }

@@ -31,4 +31,8 @@ public interface CahgFloatNewsService {
 	void stick(Integer floatNewId);
 
 	void unStick();
+	
+	void updateStatusShow(Integer[] floatNewIds);
+	void updateStatusUnShow(Integer[] floatNewIds);
+	
 }

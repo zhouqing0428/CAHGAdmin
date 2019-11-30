@@ -101,5 +101,28 @@
 			#{floatNewId}
 		</foreach>
 	</delete>
+	
+	<update id="updateStatusShow">
+		update cahg_float_news 
+		<set>
+			`float_new_status` = 0
+		</set>
+		where float_new_id in
+		<foreach item="floatNewId" collection="array" open="(" separator="," close=")">
+			#{floatNewId}
+		</foreach>
+	</update>
+	
+	<update id="updateStatusUnShow">
+		update cahg_float_news 
+		<set>
+			`float_new_status` = 1
+		</set>
+		where float_new_id in
+		<foreach item="floatNewId" collection="array" open="(" separator="," close=")">
+			#{floatNewId}
+		</foreach>
+	</update>
+	
 
 </mapper>
