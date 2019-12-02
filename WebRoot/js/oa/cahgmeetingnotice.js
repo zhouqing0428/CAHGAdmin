@@ -69,6 +69,53 @@ var vm = new Vue({
             vm.getInfo(meetingNoticeId)
 		},
 		saveOrUpdate: function (event) {
+			
+			var title = $("#title").val();
+			if(title == null || title == ""){
+				alert("请填写会议名称");
+				return;
+			}
+			
+			var meetingTime = $("#meetingTime").val();
+			if(meetingTime == null || meetingTime == ""){
+				alert("请填写会议时间");
+				return;
+			}
+			
+			var meetingPlace = $("#meetingPlace").val();
+			if(meetingPlace == null || meetingPlace == ""){
+				alert("请填写会议地点");
+				return;
+			}
+			
+			var meetingDep = $("#meetingDep").val();
+			if(meetingDep == null || meetingDep == ""){
+				alert("请填写参会部门");
+				return;
+			}
+			
+			var meetingPerson = $("#meetingPerson").val();
+			if(meetingPerson == null || meetingPerson == ""){
+				alert("请填写参会人员");
+				return;
+			}
+			
+			
+			var meetingRequire = $("#meetingRequire").val();
+			if(meetingRequire == null || meetingRequire == ""){
+				alert("请填写会议要求");
+				return;
+			}
+			
+			var meetingContact = $("#meetingContact").val();
+			if(meetingContact == null || meetingContact == ""){
+				alert("请填写联系人");
+				return;
+			}
+			
+			
+			
+			
 			var url = vm.cahgMeetingNotice.meetingNoticeId == null ? "../cahgmeetingnotice/save" : "../cahgmeetingnotice/update";
 			vm.cahgMeetingNotice.startTime=$("#startTime").val();
 			vm.cahgMeetingNotice.meetingTime=$("#meetingTime").val();
