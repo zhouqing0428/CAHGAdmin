@@ -164,7 +164,7 @@ public class CahgStyleController {
 		    String fileName = sdf.format(date);
 			String type = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));// 取文件格式后缀名
 			fileName = fileName + type;// 文件名
-			String path="d:/file/upStyle/style/"+fileName;
+			String path="E:/file/upImg/style/"+fileName;
 			File destFile = new File(path);
 			try {
 				FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);// 复制临时文件到指定目录下
