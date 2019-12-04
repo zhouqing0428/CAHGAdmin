@@ -33,7 +33,7 @@ $(function () {
 				}
 			}  },
 			{ label: '弹窗图片', name: 'floatUrl', width: 80,formatter:function(value, options, row){
-				return '<img class="float-responsive" src="/file/upFloat/floatNews/'+value+'" height="50" width="100">';} }
+				return '<img class="float-responsive" src="/file/upImg/floatNews/'+value+'" height="50" width="100">';} }
         ],
 		viewrecords: true,
         height: 530,

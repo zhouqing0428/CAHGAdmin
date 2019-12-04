@@ -28,7 +28,7 @@ $(function () {
 			}  }, 			
 			{ label: '风采图片', name: 'styleUrl', width: 80,formatter:function(value, options, row){
 					if(value != ''){
-						return '<img class="style-responsive" src="/file/upStyle/style/'+value+'" height="50" width="100">';
+						return '<img class="style-responsive" src="/file/upImg/style/'+value+'" height="50" width="100">';
 					}else{
 						return '';
 					}

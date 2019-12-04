@@ -76,7 +76,7 @@ var vm = new Vue({
             //获取部门信息
 			this.getDeptList();
             
-            vm.getInfo(afficheId)
+            vm.getInfo(afficheId);
 		},
 		saveOrUpdate: function (event) {
 		   $("#selectedDept").removeAttr("selected");
