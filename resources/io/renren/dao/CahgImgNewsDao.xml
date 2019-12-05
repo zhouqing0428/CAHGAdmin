@@ -20,7 +20,7 @@
 		<if test="imgNewsStick != null">
 			and `img_news_stick`  = #{imgNewsStick}
 		</if>
-		 ORDER BY img_news_stick DESC,create_date DESC
+		 ORDER BY create_date DESC
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>

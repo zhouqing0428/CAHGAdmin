@@ -20,7 +20,7 @@
 		<if test="dayStick != null">
 			and `day_stick`  = #{dayStick}
 		</if>
-		ORDER BY day_stick DESC, create_date DESC  
+		ORDER BY create_date DESC  
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
