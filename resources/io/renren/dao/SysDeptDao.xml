@@ -12,10 +12,14 @@
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.SysDeptEntity">
-		select dept_id,number,name,sys_rank,remark from sys_dept where 1=1
+		select d.dept_id,d.number,d.name,d.sys_rank,d.remark,d.parent_id,p.name as parentName
+		from sys_dept d 
+		LEFT JOIN sys_dept p on p.dept_id = d.parent_id 
+		where 1=1
 		<if test="deptId != null">
-			and dept_id=#{deptId}
+			and d.dept_id=#{deptId}
 		</if>
+		order by if(isnull(d.sys_rank),1,0),d.sys_rank asc
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
@@ -32,6 +36,7 @@
 		      #{item, jdbcType=INTEGER}
 		    </foreach>
 		</if>
+		order by if(isnull(sys_rank),1,0),sys_rank asc
 	</select>
 
 	<select id="queryTotal" resultType="int">

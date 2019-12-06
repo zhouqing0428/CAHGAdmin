@@ -3,18 +3,17 @@
 <mapper namespace="io.renren.dao.CahgActivityNoticeDao">
 
 	<select id="queryObject" resultType="io.renren.entity.CahgActivityNoticeEntity">
-		select a.*,(select b.name from sys_user b where a.create_user_id = b.user_id) as userName from cahg_activity_notice a
+		select * from cahg_activity_notice
 		where id = #{value}
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.CahgActivityNoticeEntity">
-		SELECT a.*,u.name AS userName FROM cahg_activity_notice a 
-		INNER JOIN sys_user u on a.create_user_id = u.user_id
+		SELECT * FROM cahg_activity_notice 
 		WHERE 1 = 1 
 		<if test="title != null and title.trim() != ''">
-		 	 and a.`title` like concat('%',#{title},'%')
+		 	 and `title` like concat('%',#{title},'%')
 		</if>
-		ORDER BY a.create_date DESC
+		ORDER BY create_date DESC
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
@@ -35,6 +34,11 @@
 			`content`, 
 			`file_name`, 
 			`file_old_name`, 
+			`address`, 
+			`time`, 
+			`person`, 
+			`user_name`,
+			`remark`, 
 			`create_user_id`, 
 			`create_date`
 		)
@@ -45,6 +49,11 @@
 			#{content}, 
 			#{fileName}, 
 			#{fileOldName},
+			#{address},
+			#{time},
+			#{person},
+			#{userName},
+			#{remark},
 			#{createUserId}, 
 			sysdate()			 
 		)
@@ -58,7 +67,12 @@
 			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
 			<if test="lastUpdateDate != null">`last_update_date` = #{lastUpdateDate}, </if>
 			<if test="fileName != null">`file_name` = #{fileName}, </if>
-			<if test="fileOldName != null">`file_old_name` = #{fileOldName}</if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName},</if>
+			<if test="address != null">`address` = #{address},</if>
+			<if test="time != null">`time` = #{time},</if>
+			<if test="person != null">`person` = #{person},</if>
+			<if test="userName != null">`user_name` = #{userName},</if>
+			<if test="remark != null">`remark` = #{remark}</if>
 		</set>
 		where id = #{id}
 	</update>

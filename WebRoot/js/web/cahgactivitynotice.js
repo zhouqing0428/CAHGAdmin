@@ -4,10 +4,14 @@ $(function () {
         datatype: "json",
         colModel: [			
 			{ label: 'id', name: 'id', width: 50, key: true,hidden:true },
-			{ label: '标题', name: 'title', width: 200 }, 
+			{ label: '活动标题', name: 'title', width: 150 }, 
+			{ label: '活动目标及方案', name: 'content', width: 100 }, 
 			{ label: '文件名', name: 'fileOldName', width: 60 }, 
-			{ label: '创建人', name: 'userName', width: 30 },
-			{ label: '创建时间', name: 'createDate', width: 55 }
+			{ label: '活动地点', name: 'address', width: 100 }, 
+			{ label: '活动时间', name: 'time', width: 100 }, 
+			{ label: '参加人员', name: 'person', width: 100 }, 
+			{ label: '发布人', name: 'userName', width: 32 },
+			{ label: '发布时间', name: 'createDate', width: 55}
         ],
 		viewrecords: true,
         height: 385,
@@ -60,7 +64,6 @@ var vm = new Vue({
 			vm.showList = false;
 			vm.title = "新增";
 			vm.info = {};
-			UE.getEditor('editor').setContent('');  //编辑内容为空
 		},
 		update: function (event) {
 			var id = getSelectedRow();
@@ -83,16 +86,8 @@ var vm = new Vue({
 				return;
 			}
 			
-			var content = UE.getEditor('editor').getContent();
-			if(content == null || content == ""){
-				alert("请填写内容");
-				return;
-			}
-			
 			var url = vm.info.id == null ? "../cahgactivitynotice/save" : "../cahgactivitynotice/update";
-		    var content=UE.getEditor('editor').getContent();  //新闻内容
 	
-		    vm.info.content=content;
 			vm.info.fileName=$("#fileName").val();
 			vm.info.fileOldName=$("#fileOldName").val();
 			$.ajax({
@@ -201,7 +196,6 @@ var vm = new Vue({
 		},
 		getInfo: function(id){
 			$.get("../cahgactivitynotice/info/"+id, function(r){
-				UE.getEditor('editor').setContent(r.info.content);  //回显编辑内容
                 vm.info = r.info;
                 $("#fileName").val(vm.info.fileName);
     			$("#fileOldName").val(vm.info.fileOldName);

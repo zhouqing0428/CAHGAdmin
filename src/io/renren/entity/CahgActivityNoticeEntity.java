@@ -9,17 +9,25 @@ public class CahgActivityNoticeEntity implements Serializable {
 
 	//活动ID，主键
 	private Integer id;
-	//标题
+	//活动标题
 	private String title;
-	//内容
+	//活动目标及方案
 	private String content;
 	//附件名称
 	private String fileName;
 	//附件原名
 	private String fileOldName;
+	//活动地点
+	private String address;
+	//活动时间
+	private String time;
+	//参加人员
+	private String person;
+	//备注
+	private String remark;
 	//创建人ID
 	private String createUserId;
-	//创建人姓名
+	//发布人
 	private String userName;
 	//创建时间
 	private Date createDate;
@@ -57,6 +65,30 @@ public class CahgActivityNoticeEntity implements Serializable {
 	}
 	public void setFileOldName(String fileOldName) {
 		this.fileOldName = fileOldName;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public String getPerson() {
+		return person;
+	}
+	public void setPerson(String person) {
+		this.person = person;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	public String getCreateUserId() {
 		return createUserId;
