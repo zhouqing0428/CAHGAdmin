@@ -24,14 +24,15 @@ $(function () {
 				}
 			}  }, 			
 		/*	{ label: '置顶状态0:表示置顶', name: 'floatNewsStick', width: 80 }, */			
-			{ label: '排序号', name: 'floatNewsRank', width: 40,formatter:function(value, options, row){
+			/*{ label: '排序号', name: 'floatNewsRank', width: 40,formatter:function(value, options, row){
 				if(value != null && value != ''&&value!='default'){
 					return value;  
 				}
 				else{
 					return "";
 				}
-			}  },
+			}  },*/
+			{ label: '弹窗链接', name: 'floatLink', width: 80 },
 			{ label: '弹窗图片', name: 'floatUrl', width: 80,formatter:function(value, options, row){
 				return '<img class="float-responsive" src="/file/upImg/floatNews/'+value+'" height="50" width="100">';} }
         ],

@@ -46,7 +46,8 @@
 			`author`, 
 			`dept_id`, 
 			`float_new_status`, 
-			`float_news_stick`
+			`float_news_stick`,
+			`float_link`
 		)
 		values
 		(
@@ -60,7 +61,8 @@
 			#{author}, 
 			#{deptId}, 
 			#{floatNewStatus}, 
-			#{floatNewsStick} 
+			#{floatNewsStick},
+			#{floatLink}
 		)
 	</insert>
 	 
@@ -78,7 +80,8 @@
 			<if test="deptId != null">`dept_id` = #{deptId}, </if>
 			<if test="floatNewStatus != null">`float_new_status` = #{floatNewStatus}, </if>
 			<if test="floatNewsStick != null">`float_news_stick` = #{floatNewsStick}, </if>
-			<if test="floatNewsRank != null">`float_news_rank` = #{floatNewsRank}</if>
+			<if test="floatNewsRank != null">`float_news_rank` = #{floatNewsRank}, </if>
+			<if test="floatLink != null">`float_link` = #{floatLink}</if>
 		</set>
 		where float_new_id = #{floatNewId}
 	</update>

@@ -55,7 +55,16 @@ public class CahgFloatNewsEntity implements Serializable {
 	private String floatNewsRank;
 	//部门名称
 	private String deptName;
+	
+	//超链接
+	private String floatLink ;
 
+	public String getFloatLink() {
+		return floatLink;
+	}
+	public void setFloatLink(String floatLink) {
+		this.floatLink = floatLink;
+	}
 	/**
 	 * 设置：弹窗新闻ID
 	 */
