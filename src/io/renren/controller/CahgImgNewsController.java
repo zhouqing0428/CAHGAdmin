@@ -96,7 +96,7 @@ public class CahgImgNewsController {
 	public R selectList(){
 		//查询列表数据
 		Map<String, Object> map = new HashMap<>();
-		map.put("condition", " dept_id != 38 ");
+//		map.put("condition", " dept_id != 38 ");
 		List<SysDeptEntity> list = sysDeptService.queryDeptList(map);
 		
 		return R.ok().put("list", list);
