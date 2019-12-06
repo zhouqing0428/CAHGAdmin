@@ -15,7 +15,14 @@ $(function () {
 					return '<span class="label label-danger">隐藏</span>';  
 				}
 			}   }, 
-			
+			{ label: '置顶', name: 'stick', width: 30, formatter:function(value, options, row){
+				if(value == '1'){
+					return '<span class="label label-primary">是</span>';  
+				}
+				if(value =='0'){
+					return '<span class="label label-danger">否</span>';  
+				}
+			}   }, 
 			{ label: '发布科室', name: 'deptName', width: 50 }
         ],
 		viewrecords: true,
@@ -84,6 +91,11 @@ var vm = new Vue({
 		   vm.cahgAffiche.content=content;
 		   vm.cahgAffiche.deptId=$("#deptId").val();
 		   vm.cahgAffiche.rank=$("#rank").val();
+		   if ($("#stick").is(':checked')) {
+				vm.cahgAffiche.stick = 1;
+			} else {
+				vm.cahgAffiche.stick = 0;
+			}
 		   var url = vm.cahgAffiche.afficheId == null ? "../cahgaffiche/save" : "../cahgaffiche/update";
 			$.ajax({
 				type: "POST",
