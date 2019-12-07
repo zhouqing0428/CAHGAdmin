@@ -24,6 +24,9 @@ $(function () {
 				if(value =='5'){
 					return '<span class="label label-danger">交通路线</span>';  
 				}
+				if(value =='6'){
+					return '<span class="label label-danger">总通讯录</span>';  
+				}
 			}    }, 		
 			{ label: '排序号', name: 'rank', width: 80 }, 
 				
