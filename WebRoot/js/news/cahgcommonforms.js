@@ -21,6 +21,9 @@ $(function () {
 				if(value =='4'){
 					return '<span class="label label-danger">科室日常办公</span>';  
 				}
+				if(value =='5'){
+					return '<span class="label label-danger">交通路线</span>';  
+				}
 			}    }, 		
 			{ label: '排序号', name: 'rank', width: 80 }, 
 				
