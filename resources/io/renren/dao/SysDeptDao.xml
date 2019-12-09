@@ -66,6 +66,7 @@
 			`duty`, 
 			`regime`, 
 			`work_standard`, 
+			`sys_rank`,
 			`remark`,
 			`role`
 		)
@@ -77,6 +78,7 @@
 			#{duty}, 
 			#{regime}, 
 			#{workStandard}, 
+			#{sysRank},
 			#{remark},
 			#{role}
 		)
