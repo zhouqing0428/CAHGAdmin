@@ -11,8 +11,10 @@ public class CahgActivityNoticeEntity implements Serializable {
 	private Integer id;
 	//活动标题
 	private String title;
-	//活动目标及方案
+	//活动目标
 	private String content;
+	//活动方案
+	private String plan;
 	//附件名称
 	private String fileName;
 	//附件原名
@@ -53,6 +55,13 @@ public class CahgActivityNoticeEntity implements Serializable {
 	}
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public String getPlan() {
+		return plan;
+	}
+	public void setPlan(String plan) {
+		this.plan = plan;
 	}
 	public String getFileName() {
 		return fileName;

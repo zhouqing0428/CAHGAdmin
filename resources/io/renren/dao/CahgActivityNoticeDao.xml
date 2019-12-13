@@ -32,6 +32,7 @@
 			`id`, 
 			`title`, 
 			`content`, 
+			`plan`, 
 			`file_name`, 
 			`file_old_name`, 
 			`address`, 
@@ -47,6 +48,7 @@
 			#{id}, 
 			#{title}, 
 			#{content}, 
+			#{plan},
 			#{fileName}, 
 			#{fileOldName},
 			#{address},
@@ -64,6 +66,7 @@
 		<set>
 			<if test="title != null">`title` = #{title}, </if>
 			<if test="content != null">`content` = #{content}, </if>
+			<if test="plan != null">`plan` = #{plan}, </if>
 			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
 			<if test="lastUpdateDate != null">`last_update_date` = #{lastUpdateDate}, </if>
 			<if test="fileName != null">`file_name` = #{fileName}, </if>

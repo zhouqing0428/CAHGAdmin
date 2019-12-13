@@ -5,7 +5,8 @@ $(function () {
         colModel: [			
 			{ label: 'id', name: 'id', width: 50, key: true,hidden:true },
 			{ label: '活动标题', name: 'title', width: 150 }, 
-			{ label: '活动目标及方案', name: 'content', width: 100 }, 
+			{ label: '活动目标', name: 'content', width: 100 }, 
+			{ label: '活动方案', name: 'plan', width: 100 }, 
 			{ label: '文件名', name: 'fileOldName', width: 60 }, 
 			{ label: '活动地点', name: 'address', width: 100 }, 
 			{ label: '活动时间', name: 'time', width: 100 }, 
