@@ -298,9 +298,11 @@ public class CahgJobController {
 	@ResponseBody
 	@RequestMapping("/finish")
 	@RequiresPermissions("cahgjob:finish")
-	public R finish(@RequestBody CahgJobEntity cahgJob){
-		cahgJobService.finish(cahgJob);
+	public R finish(@RequestBody List<CahgJobEntity> list){
 		
+		for (CahgJobEntity job : list) {
+			cahgJobService.finish(job);
+		}
 		return R.ok();
 	}
 	

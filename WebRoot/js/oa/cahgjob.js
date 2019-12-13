@@ -11,6 +11,11 @@ $(function() {
 					hidden : true
 				},
 				{
+					label : 'status',
+					name : 'status',
+					hidden : true
+				},
+				{
 					label : '工作标题',
 					name : 'title',
 					width : 120
@@ -176,42 +181,50 @@ var vm = new Vue({
 //			this.getDeptList();
 		},
 		finish: function(event) {
-			var jobId = getSelectedRow();
-			if (jobId == null) {
+			var jobIds = getSelectedRows();
+			if (jobIds == null) {
 				return;
 			}
-			$.get("../cahgjob/info/" + jobId, function(r) {
-				vm.cahgJob = r.cahgJob;
-				if(vm.cahgJob.endTime==null){
-					alert("计划结束时间未填写,工作不能完结");
-					return ;
+			var grid = $("#jqGrid");
+			var array = new Array();
+			//校验合法性
+			for (var i = 0, len = jobIds.length; i < len; i++) {
+				var endTime = grid.getCell(jobIds[i],"endTime");
+				if(endTime == null){
+					alert("存在计划结束时间未填写，不能完结。");
+					return false;
 				}
-				if(vm.cahgJob.status==2||vm.cahgJob.status==3){
-					alert("工作已完结");
-					return ;
+				var status = grid.getCell(jobIds[i],"status");
+				if(status == 2 || status == 3){
+					alert("存工作已完结的工作，不能完结。");
+					return false;
 				}
-				$.ajax({
-					type : "POST",
-					url : "../cahgjob/finish",
-					data : JSON.stringify(vm.cahgJob),
-					success : function(r) {
-						if (r.code === 0) {
-							alert('操作成功', function(index) {
-								vm.reload();
-							});
-						} else {
-							alert(r.msg);
-						}
-					},
-					complete : function(XMLHttpRequest, textStatus) {
-						if (textStatus != "success") {
-							location.reload(true);
-						}
-						;
+				var detailObj = {
+	                jobId: jobIds[i], 
+	                endTime: endTime
+				};
+				array.push(detailObj);
+			}
+			$.ajax({
+				type : "POST",
+				url : "../cahgjob/finish",
+				data : JSON.stringify(array),
+				success : function(r) {
+					if (r.code === 0) {
+						alert('操作成功', function(index) {
+							vm.reload();
+						});
+					} else {
+						alert(r.msg);
 					}
-				});
+				},
+				complete : function(XMLHttpRequest, textStatus) {
+					if (textStatus != "success") {
+						location.reload(true);
+					}
+					;
+				}
 			});
-	
 		},
 		exportExcel: function(event){
 			window.location.href="../cahgjob/export?status="+$("#status").val();
