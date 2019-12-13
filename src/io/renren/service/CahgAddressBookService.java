@@ -27,4 +27,6 @@ public interface CahgAddressBookService {
 	void delete(Integer addressLookId);
 	
 	void deleteBatch(Integer[] addressLookIds);
+	
+	void batchSave(List<CahgAddressBookEntity> list);
 }

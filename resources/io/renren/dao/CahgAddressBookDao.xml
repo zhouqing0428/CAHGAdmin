@@ -59,6 +59,35 @@
 			#{deptId}
 		)
 	</insert>
+	
+	<insert id="saveBatch" parameterType="java.util.List">
+		INSERT INTO cahg_address_book
+        (
+			`name`, 
+			`mobile`, 
+			`interior`, 
+			`external`, 
+			`create_date`, 
+			`create_user_id`, 
+			`job_number`, 
+			`duty`, 
+			`dept_id`
+		)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            	#{item.name}, 
+				#{item.mobile}, 
+				#{item.interior}, 
+				#{item.external}, 
+				#{item.createDate}, 
+				#{item.createUserId}, 
+				#{item.jobNumber}, 
+				#{item.duty}, 
+				#{item.deptId}
+            )
+        </foreach>
+	</insert>
 	 
 	<update id="update" parameterType="io.renren.entity.CahgAddressBookEntity">
 		update cahg_address_book 

@@ -8,8 +8,10 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -201,7 +203,7 @@ public class CahgAddressBookController {
 				} else {
 					int success = 0;
 					Map<String, Object> hm = null;
-					List<String> numberList = new ArrayList<String>();
+					Set<String> numberSet = new HashSet<>();
 					for (int i = 0; i < size; i++) {
 						hm = listHm.get(i);
 						if (hm.get("var0") == null || StringUtils.isEmpty(hm.get("var0").toString())) {
@@ -210,7 +212,11 @@ public class CahgAddressBookController {
 						if (hm.get("var6") == null || StringUtils.isEmpty(hm.get("var6").toString())) {
 							return R.error("第" + (i + 1) + "行科室编码不能为空");
 						}
-						numberList.add(hm.get("var6").toString());
+						numberSet.add(hm.get("var6").toString());
+					}
+					List<String> numberList = new ArrayList<String>();
+					for (String number : numberSet) {
+						numberList.add(number);
 					}
 					//根据科室编码批量取出科室信息
 					List<SysDeptEntity> deptList = sysDeptService.queryListByNumbers(numberList);
@@ -218,6 +224,7 @@ public class CahgAddressBookController {
 					Map<String, SysDeptEntity> deptMap = mapDeptInfo(deptList);
 					
 					SysDeptEntity dept = null;
+					List<CahgAddressBookEntity> addList = new ArrayList<>();
 					for (int i = 0; i < size; i++) {
 						CahgAddressBookEntity book = new CahgAddressBookEntity();
 						hm = listHm.get(i);
@@ -232,11 +239,13 @@ public class CahgAddressBookController {
 							dept = deptMap.get(deptNumber);
 							if (dept != null) { // 有此科室
 								book.setDeptId(dept.getDeptId());
+								addList.add(book);
 								success++;
 							}
 						}
-						cahgAddressBookService.save(book);
 					}
+					cahgAddressBookService.batchSave(addList);
+					
 					System.out.println(" 运行时间：" + String.valueOf(endTime - startTime) + "ms");
 					return R.ok().put("msg", "操作成功，科室匹配错误数量:" + (size - success));
 				}

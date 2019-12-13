@@ -51,5 +51,10 @@ public class CahgAddressBookServiceImpl implements CahgAddressBookService {
 	public void deleteBatch(Integer[] addressLookIds){
 		cahgAddressBookDao.deleteBatch(addressLookIds);
 	}
+
+	@Override
+	public void batchSave(List<CahgAddressBookEntity> list) {
+		cahgAddressBookDao.saveBatch(list);
+	}
 	
 }
