@@ -52,7 +52,7 @@
     <div v-show="!showList" class="panel panel-default">
 		<div class="panel-heading">{{title}}</div>
 		<form class="form-horizontal">
-											<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label"><font color="red">*</font>弹窗标题</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgFloatNews.floatNewTitle" id="floatNewTitle" placeholder="弹窗新闻标题"/>
@@ -81,34 +81,34 @@
 			    </div>
 			</div>
 			
-			 						<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label"><font color="red">*</font>弹窗内容</div>
 			   	<div class="col-sm-12">
 			     <!-- 编辑器 -->
-			       <script id="editor" type="text/plain" style="width:1024px;height:500px;"></script>
+			       <script id="editor" type="text/plain" style="width:1024px;height:400px;"></script>
 			    </div>
 			</div>
 			
-									<div class="form-group" >
+			<div class="form-group" >
 			   	<div class="col-sm-2 control-label">科室</div>
-	                <div class="col-sm-10">
-					     <select id="deptId"  class="form-control">
-					         <option  :value="cahgFloatNews.deptId" id="selectedDept">{{cahgFloatNews.deptName}}</option>
-					          <option  value="0"></option>
-					         <option v-for="item in deptList" :value="item.deptId "  >
-					         	 {{item.name }}
-					         </option>
-					     </select>
-				      </div> 
+                <div class="col-sm-10">
+				     <select id="deptId"  class="form-control">
+				         <option  :value="cahgFloatNews.deptId" id="selectedDept">{{cahgFloatNews.deptName}}</option>
+				          <option  value="0"></option>
+				         <option v-for="item in deptList" :value="item.deptId "  >
+				         	 {{item.name }}
+				         </option>
+				     </select>
+			      </div> 
 			</div> 
 			
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">作者</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgFloatNews.author" placeholder="作者"/>
 			    </div>
 			</div>
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">状态</div>
 			   	<!-- <div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgFloatNews.floatNewStatus" placeholder="状态：0:显示 1:禁用"/>
@@ -127,7 +127,7 @@
 			      <input type="text" class="form-control" id="createDate" v-model="cahgFloatNews.createDate"  onclick="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" placeholder="时间"/>
 			    </div>
 			</div> -->
-							<div class="form-group">
+			<div class="form-group">
 				<div class="col-sm-2 control-label"></div> 
 				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
 				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
