@@ -12,7 +12,7 @@ $(function () {
 					return '<span class="label label-primary">部门网站</span>';  
 				}
 				if(value =='2'){
-					return '<span class="label label-danger">分类网站</span>';  
+					return '<span class="label label-danger">分关网站</span>';  
 				}
 				if(value == '3'){
 					return '<span class="label label-info">应用系统</span>';  

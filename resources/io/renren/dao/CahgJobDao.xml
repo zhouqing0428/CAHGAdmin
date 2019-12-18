@@ -18,7 +18,7 @@
 		GROUP BY b.job_id
 		<if test="userJobStatus != null and userJobStatus.trim() != ''">
 		 	 and b.`status`= #{userJobStatus}
-		</if>
+		</if>		
 		ORDER BY b.status, a.create_user_date DESC
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
@@ -34,6 +34,12 @@
 		WHERE 1 = 1 
 		<if test="status != null and status != ''">
 			AND job.status = #{status}
+		</if>
+		<if test="ids != null">
+			AND job_id in 
+			<foreach item="jobId" collection="ids" open="(" separator="," close=")">
+				#{jobId}
+			</foreach>
 		</if>
 		ORDER BY create_user_date DESC
 		<if test="offset != null and limit != null">

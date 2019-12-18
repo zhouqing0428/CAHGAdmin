@@ -76,7 +76,7 @@ $(function() {
 		viewrecords : true,
 		height : 385,
 		rowNum : 10,
-		rowList : [ 10, 30, 50 ],
+		rowList : [ 10, 30, 50, 100, 200, 300, 500 ],
 		rownumbers : true,
 		rownumWidth : 30,
 		autowidth : true,
@@ -182,7 +182,7 @@ var vm = new Vue({
 		},
 		finish: function(event) {
 			var jobIds = getSelectedRows();
-			if (jobIds == null) {
+			if (jobIds == null || jobIds.length == 0) {
 				return;
 			}
 			var grid = $("#jqGrid");
@@ -227,7 +227,17 @@ var vm = new Vue({
 			});
 		},
 		exportExcel: function(event){
-			window.location.href="../cahgjob/export?status="+$("#status").val();
+			var grid = $("#jqGrid");
+			var jobIds = grid.getGridParam("selarrrow");
+			if (jobIds == null || jobIds.length == 0) {
+				alert("至少选择一条记录");
+				return false;
+			}
+			var ids = "";
+			for (var i = 0, len = jobIds.length; i < len; i++) {
+				ids += jobIds[i] +",";
+			}
+			window.location.href="../cahgjob/export?jobIds="+ ids;
 		},
 		saveOrUpdate : function(event) {
 			var title = $("#title").val();
