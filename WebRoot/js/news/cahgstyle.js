@@ -6,9 +6,9 @@ $(function () {
 			{ label: 'styleId', name: 'styleId', width: 50, key: true,hidden:true },
 			{ label: '风采图片标题', name: 'styleTitle', width: 120 }, 			
 			{ label: '作者', name: 'author', width: 50 }, 			
-			{ label: '发布时间', name: 'createDate', width: 80,formatter:'date',
+			{ label: '发布时间', name: 'createDate', width: 50,formatter:'date',
 				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },
-			{ label: '发布科室', name: 'deptName', width: 50 },
+			{ label: '发布科室', name: 'deptName', width: 80 },
 			{ label: '最后修改时间', name: 'lastUpdateDate', width: 80,hidden:true }, 
 			{ label: '图片分类', name: 'styleCategory', width: 40,formatter:function(value, options, row){
 				if(value == '1'){

@@ -11,7 +11,7 @@ $(function () {
 			{ label: '活动地点', name: 'address', width: 100 }, 
 			{ label: '活动时间', name: 'time', width: 100 }, 
 			{ label: '参加人员', name: 'person', width: 100 }, 
-			{ label: '发布人', name: 'userName', width: 32 },
+			{ label: '发布科室', name: 'deptName', width: 80 },
 			{ label: '发布时间', name: 'createDate', width: 55}
         ],
 		viewrecords: true,
@@ -51,6 +51,7 @@ var vm = new Vue({
 		q:{
 			title:""
 		},
+		deptList:[],
 		info: {}
 	},
 	methods: {
@@ -64,6 +65,8 @@ var vm = new Vue({
 			vm.tips =false;
 			vm.showList = false;
 			vm.title = "新增";
+			//获取部门信息
+			this.getDeptList();
 			vm.info = {};
 		},
 		update: function (event) {
@@ -77,7 +80,8 @@ var vm = new Vue({
 			vm.tips =false;
 			vm.showList = false;
             vm.title = "修改";
-            
+            //获取部门信息
+			this.getDeptList();
             vm.getInfo(id);
 		},
 		saveOrUpdate: function (event) {
@@ -86,7 +90,8 @@ var vm = new Vue({
 				alert("请填写标题");
 				return;
 			}
-			
+			var deptId = $("#deptId").val();
+			vm.info.deptId = deptId;
 			var url = vm.info.id == null ? "../cahgactivitynotice/save" : "../cahgactivitynotice/update";
 	
 			vm.info.fileName=$("#fileName").val();
@@ -201,6 +206,12 @@ var vm = new Vue({
                 $("#fileName").val(vm.info.fileName);
     			$("#fileOldName").val(vm.info.fileOldName);
             });
+		},
+		//部门列表
+		getDeptList: function(){
+			$.get("../cahgimgnews/selectList", function(r){
+				vm.deptList = r.list;
+			});
 		},
 		reload: function (event) {
 			vm.showList = true;

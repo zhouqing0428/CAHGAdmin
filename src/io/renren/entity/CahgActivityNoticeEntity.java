@@ -31,6 +31,10 @@ public class CahgActivityNoticeEntity implements Serializable {
 	private String createUserId;
 	//发布人
 	private String userName;
+	//发布科室ID
+	private Integer deptId;
+	//发布科室名称
+	private String deptName;
 	//创建时间
 	private Date createDate;
 	//最后修改人Id
@@ -130,5 +134,16 @@ public class CahgActivityNoticeEntity implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+	public Integer getDeptId() {
+		return deptId;
+	}
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
+	public String getDeptName() {
+		return deptName;
+	}
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
 }

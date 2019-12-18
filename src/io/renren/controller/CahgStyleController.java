@@ -63,7 +63,7 @@ public class CahgStyleController {
 		map.put("limit", limit);
 		map.put("styleTitle", title);
 		map.put("author", author);
-		map.put("dept_id", ShiroUtils.getDeptId());
+//		map.put("dept_id", ShiroUtils.getDeptId());
 		if (!StringUtils.isEmpty(stick)) {
 			map.put("styleStick", stick);
 		}

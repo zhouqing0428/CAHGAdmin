@@ -46,7 +46,7 @@
     <div v-show="!showList" class="panel panel-default">
 		<div class="panel-heading">{{title}}</div>
 		<form class="form-horizontal">
-											<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label"><font color="red">*</font>风采标题</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgStyle.styleTitle" id="styleTitle" placeholder="风采图片标题"/>
@@ -55,50 +55,47 @@
 			
 			<div class="form-group">
 			   	<div class="col-sm-2 control-label"><font color="red">*</font>风采图片</div>
-			    	<div class="col-sm-10">
-			    		<input type="file" style="float: left;" id="styleUrl"  name="styleUrl"  accept="image/jpg,image/jpeg,image/png,image/gif" multiple="" > 
-			   	    
-			   	   		<input type="button" class="btn btn-default" @click="upStyle" value="上传">
-			   	      
-			   	       <code v-show="tips" style="margin-top:4px;display: block;">图片已上传</code>
-			    	  <img style="display: none" alt="" id="showStyle" class="style-responsive" src="">
-			           <input style="display: none" type="text" class="form-control" id="styleUrlName" placeholder=""/>
-			           </br>
-			           <span><font color="red">备注：上传图片最佳分辨率282*242</font></span>
-			    </div>
+		    	<div class="col-sm-10">
+		    		<input type="file" style="float: left;" id="styleUrl"  name="styleUrl"  accept="image/jpg,image/jpeg,image/png,image/gif" multiple="" > 
+		   	   		<input type="button" class="btn btn-default" @click="upStyle" value="上传">
+		   	        <code v-show="tips" style="margin-top:4px;display: block;">图片已上传</code>
+		    	    <img style="display: none" alt="" id="showStyle" class="style-responsive" src="">
+		            <input style="display: none" type="text" class="form-control" id="styleUrlName" placeholder=""/>
+		            </br>
+		            <span><font color="red">备注：请按7:6比例上传图片</font></span>
+		    	</div>
 			</div>
 			
 			<div class="form-group" >
 			   	<div class="col-sm-2 control-label"><font color="red">*</font>图片分类</div>
-	                <div class="col-sm-10">
-					     <select id="styleCategory"  class="form-control" v-model="cahgStyle.styleCategory">
-					         	<option value="1" >活动剪影</option>
-			              		<option value="2">摄影作品</option>
-			              		
-					     </select>
-				      </div> 
+                <div class="col-sm-10">
+				     <select id="styleCategory"  class="form-control" v-model="cahgStyle.styleCategory">
+				         	<option value="1" >活动剪影</option>
+		              		<option value="2">摄影作品</option>
+		              		
+				     </select>
+		      	</div> 
 			</div> 
 			
-			
-									<div class="form-group" >
+			<div class="form-group" >
 			   	<div class="col-sm-2 control-label">发布科室</div>
-	                <div class="col-sm-10">
-					     <select id="deptId"  class="form-control">
-					         <option  :value="cahgStyle.deptId" id="selectedDept">{{cahgStyle.deptName}}</option>
-					         <option v-for="item in deptList" :value="item.deptId "  >
-					         	 {{item.name }}
-					         </option>
-					     </select>
-				      </div> 
+                <div class="col-sm-10">
+				     <select id="deptId"  class="form-control">
+				         <option  :value="cahgStyle.deptId" id="selectedDept">{{cahgStyle.deptName}}</option>
+				         <option v-for="item in deptList" :value="item.deptId "  >
+				         	 {{item.name }}
+				         </option>
+				     </select>
+		      	</div> 
 			</div> 
 			
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">发布作者</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgStyle.author" placeholder="作者"/>
 			    </div>
 			</div>
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">状态</div>
 			   	<!-- <div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="cahgStyle.styleStatus" placeholder="状态：0:显示 1:禁用"/>
@@ -111,7 +108,7 @@
 				</label>
 			</div>
 			
-							<div class="form-group">
+			<div class="form-group">
 				<div class="col-sm-2 control-label"></div> 
 				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
 				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
