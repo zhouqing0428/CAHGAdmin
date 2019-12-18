@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import io.renren.entity.CahgStyleEntity;
+import io.renren.entity.CahgStyleCategoryEntity;
 import io.renren.entity.SysDeptEntity;
 import io.renren.service.CahgStyleService;
+import io.renren.service.CahgStyleCategoryService;
 import io.renren.service.SysDeptService;
 import io.renren.utils.PageUtils;
 import io.renren.utils.R;
@@ -43,6 +45,9 @@ import io.renren.utils.ShiroUtils;
 public class CahgStyleController {
 	@Autowired
 	private CahgStyleService cahgStyleService;
+	@Autowired
+	private CahgStyleCategoryService cahgStyleCategoryService;
+	
 	@Autowired
 	private SysDeptService sysDeptService;
 	
@@ -100,6 +105,19 @@ public class CahgStyleController {
 		List<SysDeptEntity> list = sysDeptService.queryDeptList(map);
 		
 		return R.ok().put("list", list);
+	}
+	
+	/**
+	 * 分类列表
+	 */
+	@ResponseBody
+	@RequestMapping("/selectCateList")
+	public R selectCateList(){
+		//查询列表数据
+		Map<String, Object> map = new HashMap<>();
+		List<CahgStyleCategoryEntity> cateList = cahgStyleCategoryService.queryList(map);
+		
+		return R.ok().put("cateList", cateList);
 	}
 	
 	/**

@@ -4,12 +4,15 @@
 <mapper namespace="io.renren.dao.CahgStyleDao">
 
 	<select id="queryObject" resultType="io.renren.entity.CahgStyleEntity">
-		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName 
+		select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName,
+		(select c.`cate_name` from cahg_style_category c WHERE c.id=n.style_category) as cateName
 		from cahg_style n  where n.style_id = #{value}
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.CahgStyleEntity">
-			select n.*,(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName
+			select n.*,
+			(select d.`name` from sys_dept d WHERE d.dept_id=n.dept_id) as deptName,
+			(select c.`cate_name` from cahg_style_category c WHERE c.id=n.style_category) as cateName
 		from cahg_style n where 1 = 1
 		<if test="styleTitle != null and styleTitle.trim() != ''">
 			and `style_title` like concat('%',#{styleTitle},'%') 

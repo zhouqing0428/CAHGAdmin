@@ -10,14 +10,7 @@ $(function () {
 				formatoptions:{srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d'} },
 			{ label: '发布科室', name: 'deptName', width: 80 },
 			{ label: '最后修改时间', name: 'lastUpdateDate', width: 80,hidden:true }, 
-			{ label: '图片分类', name: 'styleCategory', width: 40,formatter:function(value, options, row){
-				if(value == '1'){
-					return '活动剪影';  
-				}
-				if(value =='2'){
-					return '摄影作品';  
-				}
-			}  },
+			{ label: '图片分类', name: 'cateName', width: 40 },
 			{ label: '状态', name: 'styleStatus', width: 40,formatter:function(value, options, row){
 				if(value == '0'){
 					return '<span class="label label-primary">显示</span>';  
@@ -73,6 +66,7 @@ var vm = new Vue({
 		},
 		title: null,
 		deptList:[],
+		cateList:[],
 		cahgStyle: {}
 	},
 	methods: {
@@ -88,6 +82,8 @@ var vm = new Vue({
 			$("#styleUrlName").val("");
 			//获取部门信息
 			this.getDeptList();
+			//获取分类信息
+			this.getCateList();
 		},
 		update: function (event) {
 			var styleId = getSelectedRow();
@@ -95,12 +91,15 @@ var vm = new Vue({
 				return ;
 			}
 			$("#selectedDept").attr("selected","selected");
+			$("#selectedCategory").attr("selected","selected");
 			vm.showList = false;
             vm.title = "修改";
             vm.tips=false;
             $("#styleUrl").val("");
 			$("#styleUrlName").val("");
             this.getDeptList();
+            //获取分类信息
+			this.getCateList();
             vm.getInfo(styleId)
 		},
 		saveOrUpdate: function (event) {
@@ -123,6 +122,7 @@ var vm = new Vue({
 			}
 			
 			$("#selectedDept").removeAttr("selected");
+			$("#selectedCategory").removeAttr("selected");
 			
 		    vm.cahgStyle.deptId=$("#deptId").val();
 		    vm.cahgStyle.styleUrl=$("#styleUrlName").val();
@@ -286,8 +286,18 @@ var vm = new Vue({
 			});
 			
 		},
+		//分类列表
+		getCateList: function(){
+			$.get("../cahgstyle/selectCateList", function(r){
+				//console.log(r.cateList)
+				//console.log("88888888")
+				vm.cateList = r.cateList;
+			});
+			
+		},
 		reload: function (event) {
 			$("#selectedDept").removeAttr("selected");
+			$("#selectedCategory").removeAttr("selected");
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 

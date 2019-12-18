@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgStyleCategoryDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgStyleCategoryEntity">
+		select * 
+		from cahg_style_category where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgStyleCategoryEntity">
+			select *
+		from cahg_style_category where 1 = 1
+		<if test="cateName != null and cateName.trim() != ''">
+			and `cate_name` like concat('%',#{cateName},'%') 
+		</if>
+		
+		 ORDER BY order_num DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_style_category where 1=1
+		<if test="cateName != null and cateName.trim() != ''">
+			and `cate_name` like concat('%',#{cateName},'%') 
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgStyleCategoryEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into cahg_style_category
+		(
+			`cate_name`, 
+			`order_num`
+		)
+		values
+		(
+			#{cateName}, 
+			#{orderNum} 
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgStyleCategoryEntity">
+		update cahg_style_category 
+		<set>
+			<if test="cateName != null">`cate_name` = #{cateName}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}  </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_style_category where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_style_category where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>
