@@ -296,7 +296,7 @@ public class CahgAddressBookController {
 	@RequiresPermissions("cahgaddressbook:update")
 	public R update(@RequestBody CahgAddressBookEntity cahgAddressBook){
 		cahgAddressBook.setLastUpdateUserId(ShiroUtils.getUserId());
-		cahgAddressBook.setDeptId(ShiroUtils.getUserEntity().getDeptId());
+//		cahgAddressBook.setDeptId(ShiroUtils.getUserEntity().getDeptId());
 		cahgAddressBookService.update(cahgAddressBook);
 		
 		return R.ok();
