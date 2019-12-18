@@ -356,7 +356,7 @@ public class CahgJobController {
 	 * @throws IOException 
 	 */
 	@RequestMapping(value="/export",method={RequestMethod.GET,RequestMethod.POST})
-	public void exports(String status, HttpServletResponse response) throws IOException {
+	public void exports(String jobIds, HttpServletResponse response) throws IOException {
 		OutputStream outputStream = null;
 		// 第一步创建一个webbook ,对应一个Excel文件
 		// HSSFWorkbook webBook = new HSSFWorkbook(); //03版本
@@ -389,7 +389,8 @@ public class CahgJobController {
 
 		// 第五步 写入实体数据 实际应用中这些数据从数据库得到
 		Map<String, Object> map = new HashMap<>();
-		map.put("status", status);
+		String[] ids = jobIds.split(",");
+		map.put("ids", ids);
 		//查询列表数据
 		List<CahgJobEntity> list = cahgJobService.queryAllList(map);
 		// 批量取出科室并缓存
