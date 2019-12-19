@@ -380,7 +380,7 @@ public class CahgJobController {
 		sheet.setDefaultColumnWidth(width);
 
 		XSSFCell cell = null;
-		String[] strs = { "工作标题", "经办科室", "计划完成时间", "状态", "办结时间", "发起人", "发起时间" };
+		String[] strs = { "工作标题", "工作内容", "经办科室", "计划完成时间", "状态", "办结时间", "发起人", "发起时间" };
 		for (int i = 0; i < strs.length; i++) {
 			cell = row.createCell(i);
 			cell.setCellValue(strs[i]);
@@ -404,23 +404,24 @@ public class CahgJobController {
 			row = sheet.createRow((int) i + 1);
 			// 第四步， 创建单元格，并设置值
 			row.createCell(0).setCellValue(job.getTitle());
-			row.createCell(1).setCellValue(job.getDeptName());
+			row.createCell(1).setCellValue(job.getContent());
+			row.createCell(2).setCellValue(job.getDeptName());
 			if(job.getEndTime()!=null){
-				row.createCell(2).setCellValue(format.format(job.getEndTime()));
+				row.createCell(3).setCellValue(format.format(job.getEndTime()));
 			} else {
-				row.createCell(2).setCellValue("");
+				row.createCell(3).setCellValue("");
 			}
-			row.createCell(3).setCellValue(getStatusName(job.getStatus()));
+			row.createCell(4).setCellValue(getStatusName(job.getStatus()));
 			if (job.getFinishTime() != null) {
-				row.createCell(4).setCellValue(format.format(job.getFinishTime()));
+				row.createCell(5).setCellValue(format.format(job.getFinishTime()));
 			} else {
-				row.createCell(4).setCellValue("");
+				row.createCell(5).setCellValue("");
 			}
-			row.createCell(5).setCellValue(job.getCreateUser());
+			row.createCell(6).setCellValue(job.getCreateUser());
 			if (job.getCreateUserDate() != null) {
-				row.createCell(6).setCellValue(format.format(job.getCreateUserDate()));
+				row.createCell(7).setCellValue(format.format(job.getCreateUserDate()));
 			} else {
-				row.createCell(6).setCellValue("");
+				row.createCell(7).setCellValue("");
 			}
 		}
 		try {
