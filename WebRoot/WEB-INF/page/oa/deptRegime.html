@@ -45,7 +45,7 @@
 			       <input type="text" class="form-control" style="cursor:pointer;" v-model="sysDept.parentName"  readonly="readonly" placeholder="长安海关"/>
 			    </div>
 			</div> 
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">科室名称</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="sysDept.name" placeholder="科室名称" readonly="readonly"/>
@@ -63,7 +63,7 @@
 			    </div>
 			</div>
 			
-									<div class="form-group">
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">职责及任务</div>
 			   	<div class="col-sm-10">
 			      <!-- <input type="text" class="form-control" v-model="sysDept.duty" placeholder="科室职责"/>
@@ -71,13 +71,13 @@
 			        <script id="duty" type="text/plain" style="width:1000px;height:400px;"></script>
 			    </div>
 			</div>
-									<div class="form-group" style="display: none">
+			<div class="form-group" style="display: none">
 			   	<div class="col-sm-2 control-label">科室管理制度</div>
 			   	<div class="col-sm-10">
 			         <script id="regime" type="text/plain" style="width:1000px;height:400px;"></script>
 			    </div>
 			</div>
-									<div class="form-group" style="display:none">
+			<div class="form-group" style="display:none">
 			   	<div class="col-sm-2 control-label">操作规范</div>
 			   	<div class="col-sm-10">
 			         <script id="workStandard" type="text/plain" style="width:1000px;height:400px;"></script>
@@ -92,7 +92,17 @@
 			    </div>
 			</div>
 			
-									<div class="form-group">
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态</div>
+			     <label class="radio-inline">
+				  <input type="radio" name="status" value="0" v-model="sysDept.status"/> 显示
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="status" value="1" v-model="sysDept.status"/> 隐藏
+				</label>
+			</div>
+			
+			<div class="form-group">
 			   	<div class="col-sm-2 control-label">备注</div>
 			   	<div class="col-sm-10">
 			      <input type="text" class="form-control" v-model="sysDept.remark" placeholder="备注"/>

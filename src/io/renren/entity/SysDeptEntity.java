@@ -60,6 +60,9 @@ public class SysDeptEntity implements Serializable {
 	//保存上传文件的原名
 	private String fileNames;
 	
+	//状态：0:显示 1:隐藏
+	private Integer status;
+	
 	private String lastUpdateName;
 	private String createUserName;
 	
@@ -297,5 +300,11 @@ public class SysDeptEntity implements Serializable {
 	}
 	public void setNumber(String number) {
 		this.number = number;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 }

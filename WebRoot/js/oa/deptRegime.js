@@ -16,6 +16,14 @@ $(function () {
 			{ label: '操作规则', name: 'deptId', width: 40, formatter: function(value, options, row){
 				return '<a  class="btn btn-primary btn-xs" href="../sysdept/deptWorkStandard?deptId='+value+'">查看</a>';
 			} }	,
+			{ label: '状态', name: 'status', width: 25, formatter:function(value, options, row){
+				if(value == '0'){
+					return '<span class="label label-primary">显示</span>';  
+				}
+				if(value =='1'){
+					return '<span class="label label-danger">隐藏</span>';  
+				}
+			} }	,
 			{ label: '附件名称', name: 'fileOldName', width: 80 }, 			
 			{ label: '备注', name: 'remark', width: 80 }			
         ],

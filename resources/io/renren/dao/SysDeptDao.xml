@@ -12,7 +12,7 @@
 	</select>
 
 	<select id="queryList" resultType="io.renren.entity.SysDeptEntity">
-		select d.dept_id,d.number,d.name,d.sys_rank,d.remark,d.parent_id,p.name as parentName
+		select d.dept_id,d.number,d.name,d.sys_rank,d.remark,d.parent_id,p.name as parentName,d.status 
 		from sys_dept d 
 		LEFT JOIN sys_dept p on p.dept_id = d.parent_id 
 		where 1=1
@@ -95,6 +95,7 @@
 			<if test="workStandard != null">`work_standard` = #{workStandard}, </if>
 			<if test="fileName != null">`file_name` = #{fileName}, </if>
 			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="status != null">`status` = #{status}, </if>
 			<if test="sysRank != null">`sys_rank` = #{sysRank}, </if>
 			<if test="remark != null">`remark` = #{remark}</if>
 		</set>
