@@ -57,6 +57,15 @@ public class CahgStyleEntity implements Serializable {
 	private String styleRank;
 	//部门名称
 	private String deptName;
+	//风采分类名称
+	private String cateName;
+		
+	public String getCateName() {
+		return cateName;
+	}
+	public void setCateName(String cateName) {
+		this.cateName = cateName;
+	}
 	public Integer getStyleId() {
 		return styleId;
 	}

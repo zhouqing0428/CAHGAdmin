@@ -45,6 +45,17 @@
 			      <input type="text" class="form-control" id="noticeTitle" v-model="info.title" placeholder="标题"/>
 			    </div>
 			</div>
+			
+			<div class="form-group" >
+			   	<div class="col-sm-2 control-label"><font color="red">*</font>分类</div>
+                <div class="col-sm-10">
+				     <select id="violationCategory"  class="form-control" v-model="info.violationCategory">
+				         	<option value="1" >违纪曝光</option>
+		              		<option value="2">内务检查通报</option>
+				     </select>
+		      	</div> 
+			</div> 
+			
 			<div class="form-group">
 			   	<div class="col-sm-2 control-label">附件名称</div>
 			   	<div class="col-sm-10">
