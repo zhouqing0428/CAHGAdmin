@@ -6920,7 +6920,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
                     '.view{padding:0;word-wrap:break-word;cursor:text;height:90%;}\n' +
                     //设置默认字体和字号
                     //font-family不能呢随便改，在safari下fillchar会有解析问题
-                    'body{margin:8px;font-family:sans-serif;font-size:18px;}' +
+                    'body{margin:8px;font-family:FZFangSong_GBK;font-size:21px;}' +
                     //设置段落间距
                     'p{margin:5px 0;}</style>' +
                     ( options.iframeCssUrl ? '<link rel=\'stylesheet\' type=\'text/css\' href=\'' + utils.unhtml(options.iframeCssUrl) + '\'/>' : '' ) +
@@ -11469,6 +11469,11 @@ UE.plugins['font'] = function () {
         };
     me.setOpt({
         'fontfamily': [
+			{ name: 'fzfangsong_gbk', val: '方正仿宋_GBK,FZFangSong_GBK'},
+			{ name: 'gzsimhei_gbk', val: '方正黑体_GBK,FZSimHei_GBK'},
+			{ name: 'fasimkai_gbk', val: '方正楷体_GBK,FZSimKai_GBK'},
+			{ name: 'fzsong_gbk', val: '方正小标宋_GBK,FZSong_GBK'},
+            { name: 'fangsong', val: '仿宋,FangSong'},
             { name: 'songti', val: '宋体,SimSun'},
             { name: 'yahei', val: '微软雅黑,Microsoft YaHei'},
             { name: 'kaiti', val: '楷体,楷体_GB2312, SimKai'},

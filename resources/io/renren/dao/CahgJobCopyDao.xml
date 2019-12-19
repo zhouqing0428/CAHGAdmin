@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgJobCopyDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgJobCopyEntity">
+		select * from cahg_job_copy where job_copy_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgJobCopyEntity">
+						SELECT a.*
+			, (
+				SELECT b.`name`
+				FROM sys_user b
+				WHERE a.to_user_id = b.user_id
+			) AS userName
+			, (
+				SELECT c.title
+				FROM cahg_job c
+				WHERE c.job_id = a.job_id
+			) AS title
+		FROM cahg_job_copy a
+		WHERE a.to_user_id = #{userId}
+		ORDER BY a.create_time DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select COUNT(*)
+ from cahg_job_copy a where a.to_user_id=#{userId}
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgJobCopyEntity" useGeneratedKeys="true" keyProperty="jobCopyId">
+		insert into cahg_job_copy
+		(
+			`remark`, 
+			`status`, 
+			`create_user_id`, 
+			`to_user_id`, 
+			`job_id`, 
+			`create_time`
+		)
+		values
+		(
+			#{remark}, 
+			#{status}, 
+			#{createUserId}, 
+			#{toUserId}, 
+			#{jobId}, 
+			sysdate()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgJobCopyEntity">
+		update cahg_job_copy 
+		<set>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="toUserId != null">`to_user_id` = #{toUserId}, </if>
+			<if test="jobId != null">`job_id` = #{jobId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where job_copy_id = #{jobCopyId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_job_copy where job_copy_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_job_copy where job_copy_id in 
+		<foreach item="jobCopyId" collection="array" open="(" separator="," close=")">
+			#{jobCopyId}
+		</foreach>
+	</delete>
+
+</mapper>
