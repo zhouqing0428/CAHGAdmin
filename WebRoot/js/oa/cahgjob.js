@@ -162,6 +162,7 @@ var vm = new Vue({
 				urgentStatus : 0
 			};
 			$("#content").val("");
+			UE.getEditor('editor').setContent('');  //编辑内容为空
 			vm.resetDeptList();
 			// 获取部门信息
 //			this.getDeptList();

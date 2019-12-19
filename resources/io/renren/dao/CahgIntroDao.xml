@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgIntroDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgIntroEntity">
+		select * from cahg_intro where intro_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgIntroEntity">
+		select * from cahg_intro 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_intro 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgIntroEntity">
+		insert into cahg_intro
+		(
+			`intro_id`, 
+			`content`,
+			`remark`
+		)
+		values
+		(
+			#{introId}, 
+			#{content},
+			#{remark}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgIntroEntity">
+		update cahg_intro 
+		<set><if test="remark != null">`remark` = #{remark},</if>
+			<if test="content != null">`content` = #{content}</if>
+		</set>
+		where intro_id = #{introId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_intro where intro_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_intro where intro_id in 
+		<foreach item="introId" collection="array" open="(" separator="," close=")">
+			#{introId}
+		</foreach>
+	</delete>
+
+</mapper>

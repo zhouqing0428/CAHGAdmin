@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.CahgIntroFileDao">
+
+	<select id="queryObject" resultType="io.renren.entity.CahgIntroFileEntity">
+		select * from cahg_intro_file where intro_file_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.CahgIntroFileEntity">
+		select * from cahg_intro_file order by rank is NULL,rank asc,create_date DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from cahg_intro_file 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.CahgIntroFileEntity">
+		insert into cahg_intro_file
+		(
+			`intro_file_id`, 
+			`title`, 
+			`file_name`, 
+			`file_old_name`, 
+			`rank`, 
+			`create_date`
+		)
+		values
+		(
+			#{introFileId}, 
+			#{title}, 
+			#{fileName}, 
+			#{fileOldName}, 
+			#{rank}, 
+			sysdate()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.CahgIntroFileEntity">
+		update cahg_intro_file 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="fileName != null">`file_name` = #{fileName}, </if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="createDate != null">`create_date` = #{createDate},</if>
+			`rank` = #{rank}
+		</set>
+		where intro_file_id = #{introFileId}
+	</update>
+	
+	<delete id="delete">
+		delete from cahg_intro_file where intro_file_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from cahg_intro_file where intro_file_id in 
+		<foreach item="introFileId" collection="array" open="(" separator="," close=")">
+			#{introFileId}
+		</foreach>
+	</delete>
+
+</mapper>

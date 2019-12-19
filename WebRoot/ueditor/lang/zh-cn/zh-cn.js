@@ -49,6 +49,11 @@ UE.I18N['zh-cn'] = {
     },
     'paragraph':{'p':'段落', 'h1':'标题 1', 'h2':'标题 2', 'h3':'标题 3', 'h4':'标题 4', 'h5':'标题 5', 'h6':'标题 6'},
     'fontfamily':{
+    	'fzfangsong_gbk': '方正仿宋_GBK',
+    	'gzsimhei_gbk': '方正黑体_GBK',
+    	'fasimkai_gbk': '方正楷体_GBK',
+    	'fzsong_gbk': '方正小标宋_GBK',
+    	'fangsong': '仿宋',
         'songti':'宋体',
         'kaiti':'楷体',
         'heiti':'黑体',

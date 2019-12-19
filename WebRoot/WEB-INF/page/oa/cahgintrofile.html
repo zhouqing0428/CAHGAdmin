@@ -9,13 +9,13 @@
 	<div v-show="showList">
 		<div class="grid-btn">
 			#if($shiro.hasPermission("cahgintrofile:save"))
-			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;ĞÂÔö</a>
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;æ–°å¢</a>
 			#end
 			#if($shiro.hasPermission("cahgintrofile:update"))
-			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;ĞŞ¸Ä</a>
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;ä¿®æ”¹</a>
 			#end
 			#if($shiro.hasPermission("cahgintrofile:delete"))
-			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;É¾³ı</a>
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;åˆ é™¤</a>
 			#end
 		</div>
 	    <table id="jqGrid"></table>
@@ -26,18 +26,18 @@
 		<div class="panel-heading">{{title}}</div>
 		<form class="form-horizontal">
 											<div class="form-group">
-			   	<div class="col-sm-2 control-label">±êÌâ</div>
+			   	<div class="col-sm-2 control-label">æ ‡é¢˜</div>
 			   	<div class="col-sm-10">
-			      <input type="text" class="form-control" v-model="cahgIntroFile.title" placeholder="±êÌâ"/>
+			      <input type="text" class="form-control" v-model="cahgIntroFile.title" placeholder="æ ‡é¢˜"/>
 			    </div>
 			</div>
 									<div class="form-group">
-			   	<div class="col-sm-2 control-label">ÎÄ¼ş</div>
+			   	<div class="col-sm-2 control-label">æ–‡ä»¶</div>
 			   	<div class="col-sm-10">
 			     <!--  <input type="text" class="form-control" v-model="cahgIntroFile.fileName" placeholder=""/> -->
 			     <input type="file" style="float: left;" id="file"  name="file"  multiple="" > 
-			   	      <input type="button" class="btn btn-default" @click="upfile" value="ÉÏ´«">
-			   	      <code v-show="tips" style="margin-top:4px;display: block;">ÎÄ¼şÒÑÉÏ´«</code>
+			   	      <input type="button" class="btn btn-default" @click="upfile" value="ä¸Šä¼ ">
+			   	      <code v-show="tips" style="margin-top:4px;display: block;">æ–‡ä»¶å·²ä¸Šä¼ </code>
 			          <input type="text" style="display: none"  class="form-control" id="fileName" placeholder=""/>
 			          <input type="text" style="display: none"  class="form-control" id="fileOldName" placeholder=""/>
 			    </div>
@@ -49,15 +49,15 @@
 			    </div>
 			</div> -->
 			<div class="form-group">
-			   	<div class="col-sm-2 control-label">ÅÅĞòºÅ</div>
+			   	<div class="col-sm-2 control-label">æ’åºå·</div>
 			   	<div class="col-sm-10">
-			      <input type="text" id="rank" class="form-control"  maxlength="8" v-model="cahgIntroFile.rank" placeholder="ÅÅĞòºÅ" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
+			      <input type="text" id="rank" class="form-control"  maxlength="8" v-model="cahgIntroFile.rank" placeholder="æ’åºå·" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
 			    </div>
 			</div>
 							<div class="form-group">
 				<div class="col-sm-2 control-label"></div> 
-				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="È·¶¨"/>
-				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="·µ»Ø"/>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="ç¡®å®š"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="è¿”å›"/>
 			</div>
 		</form>
 	</div>
