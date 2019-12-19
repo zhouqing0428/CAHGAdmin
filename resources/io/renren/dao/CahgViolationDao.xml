@@ -36,7 +36,8 @@
 			`file_name`, 
 			`file_old_name`, 
 			`create_user_id`, 
-			`create_date`
+			`create_date`,
+			`violation_category`
 		)
 		values
 		(
@@ -46,7 +47,8 @@
 			#{fileName}, 
 			#{fileOldName},
 			#{createUserId}, 
-			sysdate()			 
+			sysdate(),
+			#{violationCategory}
 		)
 	</insert>
 	
@@ -58,7 +60,8 @@
 			<if test="lastUpdateUserId != null">`last_update_user_id` = #{lastUpdateUserId}, </if>
 			<if test="lastUpdateDate != null">`last_update_date` = #{lastUpdateDate}, </if>
 			<if test="fileName != null">`file_name` = #{fileName}, </if>
-			<if test="fileOldName != null">`file_old_name` = #{fileOldName}</if>
+			<if test="fileOldName != null">`file_old_name` = #{fileOldName}, </if>
+			<if test="violationCategory != null">`violation_category` = #{violationCategory}</if>
 		</set>
 		where id = #{id}
 	</update>
@@ -67,7 +70,8 @@
 		update cahg_violation set 
 		`file_name` = null, 
 		`file_old_name` = null,
-		`last_update_date` = sysdate()
+		`last_update_date` = sysdate(),
+		`violation_category` = null
 		where id in 
 		<foreach item="id" collection="array" open="(" separator="," close=")">
 			#{id}

@@ -6,6 +6,14 @@ $(function () {
 			{ label: 'id', name: 'id', width: 50, key: true,hidden:true },
 			{ label: '标题', name: 'title', width: 200 }, 
 			{ label: '文件名', name: 'fileOldName', width: 60 }, 
+			{ label: '分类', name: 'violationCategory', width: 40,formatter:function(value, options, row){
+				if(value == '1'){
+					return '违纪曝光';  
+				}
+				if(value =='2'){
+					return '内务检查通报';  
+				}
+			}  },
 			{ label: '创建人', name: 'userName', width: 30 },
 			{ label: '创建时间', name: 'createDate', width: 55 }
         ],
@@ -86,6 +94,12 @@ var vm = new Vue({
 			var content = UE.getEditor('editor').getContent();
 			if(content == null || content == ""){
 				alert("请填写内容");
+				return;
+			}
+			
+			var cate = $("#violationCategory").val();
+			if(cate == null || cate == ""){
+				alert("请填写分类");
 				return;
 			}
 			

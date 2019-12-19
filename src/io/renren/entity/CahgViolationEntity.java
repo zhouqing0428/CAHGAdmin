@@ -28,6 +28,15 @@ public class CahgViolationEntity implements Serializable {
 	//最后修改时间
 	private Date lastUpdateDate;
 	
+	//增加分类
+	private Integer violationCategory;
+		
+	public Integer getViolationCategory() {
+		return violationCategory;
+	}
+	public void setViolationCategory(Integer violationCategory) {
+		this.violationCategory = violationCategory;
+	}
 	public Integer getId() {
 		return id;
 	}
